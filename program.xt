@@ -1,0 +1,6 @@
+let a: i32 = 1;
+let b: i32 = 2;
+
+a = (a - b) / 2;
+
+print(a + 2);
