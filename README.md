@@ -53,14 +53,13 @@ We'll need to implement:
 Once the pipeline is all setup, we want to make sure working on it is as easy
 as possible. This means tests and debug information.
 
-Alongisde decent test coverage, we should be able to get the following for any
+Alongside decent test coverage, we should be able to get the following for any
 execution;
 
 1. List of tokens
 2. A dump of the symbol table
 3. `mermaid` graph visualisation of type-annotated AST
-4. The outputted TAC
-5. The x86 with the TAC instructions annotated
+4. The x86 with the TAC instructions annotated
 
 
 ## [ ] v3
@@ -94,7 +93,7 @@ This will help us get used to adding onto the pipeline.
 
 ## [ ] v7
 
--- functions --
+-- functions ?maybe --
 
 
 ## [ ] v8

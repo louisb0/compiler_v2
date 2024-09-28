@@ -1,7 +1,8 @@
-#ifndef SCANNER_H
-#define SCANNER_H
+#ifndef TOKEN_H
+#define TOKEN_H
 
 #include <string>
+#include <unordered_map>
 
 enum class TokenType {
     LET,
@@ -10,6 +11,7 @@ enum class TokenType {
     NUMBER,
     LPAREN,
     RPAREN,
+    COLON,
     SEMICOLON,
     EQUAL,
     PLUS,
@@ -17,6 +19,7 @@ enum class TokenType {
     STAR,
     SLASH,
     PRINT,
+    END_OF_FILE
 };
 
 struct Token {
@@ -24,19 +27,13 @@ struct Token {
     std::string lexeme;
     int line;
 
+    static const std::unordered_map<TokenType, std::string> token_to_str;
+    static const std::unordered_map<std::string, TokenType> lexeme_to_token;
+
     Token(TokenType type, const std::string &lexeme, int line)
         : type(type), lexeme(lexeme), line(line) {}
-};
 
-class Scanner {
-  public:
-    Scanner(const std::string &filename);
-    ~Scanner();
-
-    Token read();
-
-  private:
-    std::string source;
+    std::string str() const;
 };
 
 #endif
