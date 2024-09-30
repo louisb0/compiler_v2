@@ -5,6 +5,22 @@
 
 #include "ast.hpp"
 #include "parser.hpp"
+#include "token.hpp"
+
+std::unique_ptr<Statement> Parser::parse_statement() {
+    if (this->peek->type == TokenType::PRINT) {
+        return parse_print();
+    } else {
+        return parse_expression_statement();
+    }
+}
+
+std::unique_ptr<ExpressionStatement> Parser::parse_expression_statement() {
+    std::unique_ptr<Expression> expression = parse_expression();
+    consume(TokenType::SEMICOLON, "Expected ';' after expression.");
+
+    return std::make_unique<ExpressionStatement>(std::move(expression));
+}
 
 std::unique_ptr<Expression> Parser::parse_expression(Precedence prec) {
     advance();
@@ -50,6 +66,18 @@ std::unique_ptr<Expression> Parser::parse_binary(Token token, std::unique_ptr<Ex
     Precedence increased_precedence = static_cast<Precedence>(static_cast<int>(precedence + 1));
 
     return std::make_unique<Binary>(token.lexeme, std::move(left), parse_expression(increased_precedence));
+}
+
+std::unique_ptr<Statement> Parser::parse_print() {
+    advance();
+    consume(TokenType::LPAREN, "Expected '(' after print.");
+
+    std::unique_ptr<Expression> expression = parse_expression();
+
+    consume(TokenType::RPAREN, "Expected ')' after call to print.");
+    consume(TokenType::SEMICOLON, "Expected ';' after call to print.");
+
+    return std::make_unique<Print>(std::move(expression));
 }
 
 void Parser::advance() {

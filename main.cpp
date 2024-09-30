@@ -15,5 +15,5 @@ int main(int argc, char **argv) {
     std::cout << source << std::endl;
 
     Parser *p = new Parser(source);
-    p->parse_expression()->print();
+    p->parse_statement()->print();
 }
