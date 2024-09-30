@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "src/scanner.hpp"
+#include "src/parser.hpp"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -10,11 +10,10 @@ int main(int argc, char **argv) {
     }
 
     std::ifstream file(argv[1]);
-    std::string source((std::istreambuf_iterator<char>(file)),
-                       (std::istreambuf_iterator<char>()));
+    std::string source((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
 
     std::cout << source << std::endl;
 
-    Scanner *s = new Scanner(source);
-    s->read_tokens();
+    Parser *p = new Parser(source);
+    p->parse_expression()->print();
 }

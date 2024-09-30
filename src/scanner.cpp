@@ -1,27 +1,18 @@
 #include <cassert>
 #include <cctype>
-#include <iostream>
 #include <string>
-#include <vector>
 
 #include "scanner.hpp"
 #include "token.hpp"
-
-std::vector<Token> Scanner::read_tokens() {
-    std::vector<Token> tokens;
-    while (!is_eof()) {
-        Token token = read_token();
-        std::cout << token.str() << std::endl;
-        tokens.push_back(token);
-    }
-
-    return tokens;
-}
 
 Token Scanner::read_token() {
     skip_whitespace();
 
     this->start = this->current;
+
+    if (is_eof()) {
+        return Token(TokenType::END_OF_FILE, "\0", this->line);
+    }
 
     char c = advance();
 
@@ -61,8 +52,7 @@ Token Scanner::number() {
         advance();
     }
 
-    std::string lexeme =
-        this->source.substr(this->start, this->current - this->start);
+    std::string lexeme = this->source.substr(this->start, this->current - this->start);
 
     return Token(TokenType::NUMBER, lexeme, this->line);
 }
@@ -72,8 +62,7 @@ Token Scanner::identifier() {
         advance();
     }
 
-    std::string lexeme =
-        this->source.substr(this->start, this->current - this->start);
+    std::string lexeme = this->source.substr(this->start, this->current - this->start);
 
     auto it = Token::lexeme_to_token.find(lexeme);
     if (it != Token::lexeme_to_token.end()) {
@@ -104,7 +93,7 @@ void Scanner::skip_whitespace() {
     }
 }
 
-bool Scanner::is_eof() { return this->current == this->source.length() - 1; }
+bool Scanner::is_eof() { return this->current == this->source.length(); }
 
 char Scanner::advance() { return this->source[this->current++]; }
 
