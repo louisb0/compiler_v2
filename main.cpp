@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "src/parser.hpp"
+#include "src/visitors/print_visitor.hpp"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -15,5 +16,8 @@ int main(int argc, char **argv) {
     std::cout << source << std::endl;
 
     Parser *p = new Parser(source);
-    p->parse_statement()->print();
+    std::unique_ptr<Statement> stmt = p->parse_statement();
+
+    PrintVisitor *v = new PrintVisitor();
+    stmt->accept(*v);
 }

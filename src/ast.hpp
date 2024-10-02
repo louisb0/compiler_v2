@@ -3,10 +3,11 @@
 
 // TODO: rework
 
-#include <iostream>
 #include <memory>
 #include <string>
 #include <utility>
+
+#include "visitors/visitor.hpp"
 
 // enum class Type {
 //     I32,
@@ -15,13 +16,8 @@
 class Node {
 public:
     virtual ~Node() = default;
-    virtual void print(int indent = 0) const = 0;
 
-protected:
-    void printIndent(int indent) const {
-        for (int i = 0; i < indent; ++i)
-            std::cout << "  ";
-    }
+    virtual void accept(Visitor &visitor) const = 0;
 };
 
 class Statement : public Node {};
@@ -49,11 +45,9 @@ class Print : public Statement {
 public:
     Print(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
 
-    void print(int indent = 0) const override {
-        printIndent(indent);
-        std::cout << "Print:" << std::endl;
-        expr->print(indent + 1);
-    }
+    void accept(Visitor &visitor) const override { visitor.visitPrintStatement(*this); }
+
+    const Expression *getExpression() const { return expr.get(); }
 
 private:
     std::unique_ptr<Expression> expr;
@@ -63,11 +57,9 @@ class ExpressionStatement : public Statement {
 public:
     ExpressionStatement(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
 
-    void print(int indent = 0) const override {
-        printIndent(indent);
-        std::cout << "ExpressionStatement:" << std::endl;
-        expr->print(indent + 1);
-    }
+    void accept(Visitor &visitor) const override { visitor.visitExpressionStatement(*this); }
+
+    const Expression *getExpression() const { return expr.get(); }
 
 private:
     std::unique_ptr<Expression> expr;
@@ -79,12 +71,11 @@ public:
     Binary(std::string op, std::unique_ptr<Expression> left, std::unique_ptr<Expression> right)
         : op(op), left(std::move(left)), right(std::move(right)) {};
 
-    void print(int indent = 0) const override {
-        printIndent(indent);
-        std::cout << "Binary: " << op << std::endl;
-        left->print(indent + 1);
-        right->print(indent + 1);
-    }
+    void accept(Visitor &visitor) const override { visitor.visitBinaryExpression(*this); }
+
+    const std::string &getOperator() const { return op; }
+    const Expression *getLeft() const { return left.get(); }
+    const Expression *getRight() const { return right.get(); }
 
 private:
     std::string op;
@@ -96,11 +87,10 @@ class Unary : public Expression {
 public:
     Unary(std::string op, std::unique_ptr<Expression> expr) : op(op), expr(std::move(expr)) {}
 
-    void print(int indent = 0) const override {
-        printIndent(indent);
-        std::cout << "Unary: " << op << std::endl;
-        expr->print(indent + 1);
-    }
+    void accept(Visitor &visitor) const override { visitor.visitUnaryExpression(*this); }
+
+    const std::string &getOperator() const { return op; }
+    const Expression *getExpression() const { return expr.get(); }
 
 private:
     std::string op;
@@ -139,11 +129,9 @@ class Grouping : public Expression {
 public:
     Grouping(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
 
-    void print(int indent = 0) const override {
-        printIndent(indent);
-        std::cout << "Grouping:" << std::endl;
-        expr->print(indent + 1);
-    }
+    void accept(Visitor &visitor) const override { visitor.visitGroupingExpression(*this); }
+
+    const Expression *getExpression() const { return expr.get(); }
 
 private:
     std::unique_ptr<Expression> expr;
@@ -153,10 +141,9 @@ class Number : public Expression {
 public:
     Number(int value) : value(value) {}
 
-    void print(int indent = 0) const override {
-        printIndent(indent);
-        std::cout << "Number: " << value << std::endl;
-    }
+    void accept(Visitor &visitor) const override { visitor.visitNumberExpression(*this); }
+
+    const int getValue() const { return value; }
 
 private:
     int value;

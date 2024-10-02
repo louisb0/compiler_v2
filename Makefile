@@ -5,8 +5,8 @@ INCLUDES = -I./src
 SRC_DIR = src
 BUILD_DIR = build
 
-SRCS = main.cpp $(wildcard $(SRC_DIR)/*.cpp)
-OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
+SRCS = main.cpp $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/visitors/*.cpp)
+OBJS = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS = $(OBJS:.o=.d)
 
 TARGET = compile
@@ -17,10 +17,11 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(BUILD_DIR)/%.o: %.cpp | $(BUILD_DIR)
+	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR) $(BUILD_DIR)/$(SRC_DIR)
+	mkdir -p $(BUILD_DIR) $(BUILD_DIR)/$(SRC_DIR) $(BUILD_DIR)/$(SRC_DIR)/visitors
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
