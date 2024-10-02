@@ -67,7 +67,7 @@ execution;
 
 1. List of tokens
 2. A dump of the symbol table
-3. `mermaid` graph visualisation of type-annotated AST
+3. `mermaid` graph visualisation of the AST
 4. The x86 with the TAC instructions annotated
 
 

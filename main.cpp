@@ -3,6 +3,7 @@
 
 #include "src/parser.hpp"
 #include "src/visitors/print_visitor.hpp"
+#include "src/visitors/tac_generator.hpp"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -20,4 +21,17 @@ int main(int argc, char **argv) {
 
     PrintVisitor *v = new PrintVisitor();
     stmt->accept(*v);
+
+    std::cout << std::endl;
+
+    TacGenerator *t = new TacGenerator();
+    stmt->accept(*t);
+
+    for (int i = 0; i < t->instructions.size(); i++) {
+        std::cout << t->instructions.at(i).str(i) << std::endl;
+    }
+
+    delete p;
+    delete v;
+    delete t;
 }
