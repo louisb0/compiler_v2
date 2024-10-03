@@ -99,7 +99,7 @@ int CodeGenerator::calc_stack_size() {
     int stack_size = 0;
     for (TacInstruction t : this->instructions) {
         if (t.op != TacOperation::PRINT)
-            stack_size++;
+            stack_size += 4;
     }
 
     return stack_size;
