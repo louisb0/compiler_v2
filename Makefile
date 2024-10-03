@@ -9,7 +9,7 @@ SRCS = main.cpp $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/visitors/*.cp
 OBJS = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS = $(OBJS:.o=.d)
 
-TARGET = compile
+TARGET = bin
 
 all: $(TARGET)
 
