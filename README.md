@@ -25,7 +25,7 @@ if (arr[0] == integer) {
 }
 ```
 
-## [ ] v0
+## [X] v0
 
 For the initial version, we'll implement this part of the language:
 
