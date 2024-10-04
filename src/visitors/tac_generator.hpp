@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "../ast.hpp"
+#include "../ast/expressions.hpp"
+#include "../ast/statements.hpp"
+
 #include "visitor.hpp"
 
 enum class TacOperation {

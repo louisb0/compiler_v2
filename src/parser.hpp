@@ -3,7 +3,9 @@
 #include <optional>
 #include <unordered_map>
 
-#include "ast.hpp"
+#include "ast/expressions.hpp"
+#include "ast/statements.hpp"
+
 #include "scanner.hpp"
 #include "token.hpp"
 

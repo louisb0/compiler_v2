@@ -1,7 +1,6 @@
 #ifndef PRINT_VISITOR_H
 #define PRINT_VISITOR_H
 
-#include "../ast.hpp"
 #include "visitor.hpp"
 
 class PrintVisitor : public Visitor {

@@ -3,7 +3,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "ast.hpp"
+#include "ast/expressions.hpp"
+#include "ast/statements.hpp"
+
 #include "parser.hpp"
 #include "token.hpp"
 

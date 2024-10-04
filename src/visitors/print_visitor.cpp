@@ -1,6 +1,8 @@
 #include <iostream>
 
-#include "../ast.hpp"
+#include "../ast/expressions.hpp"
+#include "../ast/statements.hpp"
+
 #include "print_visitor.hpp"
 
 void PrintVisitor::visitPrintStatement(const Print &node) {
