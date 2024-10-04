@@ -1,5 +1,4 @@
-#ifndef SCANNER_H
-#define SCANNER_H
+#pragma once
 
 #include <string>
 
@@ -24,5 +23,3 @@ private:
     char advance();
     char peek();
 };
-
-#endif

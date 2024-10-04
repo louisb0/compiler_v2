@@ -1,5 +1,4 @@
-#ifndef TOKEN_H
-#define TOKEN_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -39,5 +38,3 @@ struct Token {
 
     std::string str() const;
 };
-
-#endif
