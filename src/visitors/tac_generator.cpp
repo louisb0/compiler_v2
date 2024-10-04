@@ -1,4 +1,8 @@
-#include "tac_generator.hpp"
+#include "../ast/expressions.hpp"
+#include "../ast/statements.hpp"
+#include "../tac_instruction.hpp"
+
+#include "visitors.hpp"
 
 void TacGenerator::visitPrintStatement(const Print &node) {
     node.getExpression()->accept(*this);

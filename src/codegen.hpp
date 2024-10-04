@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "visitors/tac_generator.hpp"
+#include "tac_instruction.hpp"
 
 class CodeGenerator {
 public:

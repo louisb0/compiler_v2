@@ -4,8 +4,7 @@
 
 #include "src/codegen.hpp"
 #include "src/parser.hpp"
-#include "src/visitors/print_visitor.hpp"
-#include "src/visitors/tac_generator.hpp"
+#include "src/visitors/visitors.hpp"
 
 int main(int argc, char **argv) {
     if (argc != 2) {
@@ -20,7 +19,7 @@ int main(int argc, char **argv) {
     Parser *p = new Parser(source);
     std::unique_ptr<Statement> stmt = p->parse_statement();
 
-    PrintVisitor *v = new PrintVisitor();
+    SyntaxTreePrinter *v = new SyntaxTreePrinter();
     stmt->accept(*v);
     std::cout << std::endl;
 

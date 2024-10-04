@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "../visitors/visitor.hpp"
+#include "../visitors/visitors.hpp"
 #include "node.hpp"
 
 class Visitor;

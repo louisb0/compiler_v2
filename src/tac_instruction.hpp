@@ -1,13 +1,6 @@
-#ifndef TAC_GENERATOR_H
-#define TAC_GENERATOR_H
+#pragma once
 
 #include <string>
-#include <vector>
-
-#include "../ast/expressions.hpp"
-#include "../ast/statements.hpp"
-
-#include "visitor.hpp"
 
 enum class TacOperation {
     VALUE,
@@ -56,17 +49,3 @@ struct TacInstruction {
         return result;
     }
 };
-
-class TacGenerator : public Visitor {
-public:
-    std::vector<TacInstruction> instructions;
-
-    void visitPrintStatement(const Print &node) override;
-    void visitExpressionStatement(const ExpressionStatement &node) override;
-    void visitBinaryExpression(const Binary &node) override;
-    void visitUnaryExpression(const Unary &node) override;
-    void visitGroupingExpression(const Grouping &node) override;
-    void visitNumberExpression(const Number &node) override;
-};
-
-#endif

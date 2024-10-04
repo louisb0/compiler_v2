@@ -1,5 +1,5 @@
 #include "codegen.hpp"
-#include "visitors/tac_generator.hpp"
+#include "tac_instruction.hpp"
 
 const std::string header = R"(
 .data
