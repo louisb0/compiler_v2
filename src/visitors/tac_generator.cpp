@@ -5,22 +5,22 @@
 #include "visitors.hpp"
 
 void TacGenerator::visitPrintStatement(const Print &node) {
-    node.getExpression()->accept(*this);
+    node.expression()->accept(*this);
 
     this->instructions.push_back(TacInstruction(TacOperation::PRINT, this->instructions.size() - 1));
 };
 
-void TacGenerator::visitExpressionStatement(const ExpressionStatement &node) { node.getExpression()->accept(*this); };
+void TacGenerator::visitExpressionStatement(const ExpressionStatement &node) { node.expression()->accept(*this); };
 
 void TacGenerator::visitBinaryExpression(const Binary &node) {
-    node.getLeft()->accept(*this);
+    node.left()->accept(*this);
     int leftIndex = this->instructions.size() - 1;
 
-    node.getRight()->accept(*this);
+    node.right()->accept(*this);
     int rightIndex = this->instructions.size() - 1;
 
     TacOperation op;
-    switch (node.getOperator()[0]) {
+    switch (node.symbol()[0]) {
     case '+':
         op = TacOperation::ADD;
         break;
@@ -39,13 +39,13 @@ void TacGenerator::visitBinaryExpression(const Binary &node) {
 };
 
 void TacGenerator::visitUnaryExpression(const Unary &node) {
-    node.getExpression()->accept(*this);
+    node.expression()->accept(*this);
 
     this->instructions.push_back(TacInstruction(TacOperation::NEG, this->instructions.size() - 1));
 }
 
-void TacGenerator::visitGroupingExpression(const Grouping &node) { node.getExpression()->accept(*this); };
+void TacGenerator::visitGroupingExpression(const Grouping &node) { node.expression()->accept(*this); };
 
 void TacGenerator::visitNumberExpression(const Number &node) {
-    this->instructions.push_back(TacInstruction(TacOperation::VALUE, node.getValue()));
+    this->instructions.push_back(TacInstruction(TacOperation::VALUE, node.value()));
 }

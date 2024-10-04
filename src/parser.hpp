@@ -39,7 +39,7 @@ public:
         init_rules();
     }
 
-    std::unique_ptr<Statement> parse_statement();
+    std::unique_ptr<Statement> statement();
 
 private:
     std::unique_ptr<Scanner> scanner;
@@ -49,31 +49,31 @@ private:
     std::unordered_map<TokenType, ParseRule> rules;
 
     void init_rules() {
-        rules[TokenType::NUMBER] = ParseRule(&Parser::parse_number, nullptr, Precedence::NONE);
-        rules[TokenType::LPAREN] = ParseRule(&Parser::parse_grouping, nullptr, Precedence::NONE);
+        rules[TokenType::NUMBER] = ParseRule(&Parser::number, nullptr, Precedence::NONE);
+        rules[TokenType::LPAREN] = ParseRule(&Parser::grouping, nullptr, Precedence::NONE);
         rules[TokenType::RPAREN] = ParseRule();
         rules[TokenType::COLON] = ParseRule();
         rules[TokenType::SEMICOLON] = ParseRule();
         rules[TokenType::EQUAL] = ParseRule();
-        rules[TokenType::PLUS] = ParseRule(nullptr, &Parser::parse_binary, Precedence::TERM);
-        rules[TokenType::MINUS] = ParseRule(&Parser::parse_unary, &Parser::parse_binary, Precedence::TERM);
-        rules[TokenType::STAR] = ParseRule(nullptr, &Parser::parse_binary, Precedence::FACTOR);
-        rules[TokenType::SLASH] = ParseRule(nullptr, &Parser::parse_binary, Precedence::FACTOR);
+        rules[TokenType::PLUS] = ParseRule(nullptr, &Parser::binary, Precedence::TERM);
+        rules[TokenType::MINUS] = ParseRule(&Parser::unary, &Parser::binary, Precedence::TERM);
+        rules[TokenType::STAR] = ParseRule(nullptr, &Parser::binary, Precedence::FACTOR);
+        rules[TokenType::SLASH] = ParseRule(nullptr, &Parser::binary, Precedence::FACTOR);
         rules[TokenType::PRINT] = ParseRule();
         rules[TokenType::END_OF_FILE] = ParseRule();
     }
 
-    std::unique_ptr<Expression> parse_expression(Precedence prec = Precedence::TERM);
-    std::unique_ptr<ExpressionStatement> parse_expression_statement();
+    std::unique_ptr<Expression> expression(Precedence prec = Precedence::TERM);
+    std::unique_ptr<ExpressionStatement> expression_statement();
 
-    std::unique_ptr<Expression> parse_number(Token token);
-    std::unique_ptr<Expression> parse_grouping(Token token);
-    std::unique_ptr<Expression> parse_binary(Token token, std::unique_ptr<Expression> left);
-    std::unique_ptr<Expression> parse_unary(Token token);
-    std::unique_ptr<Statement> parse_print();
+    std::unique_ptr<Expression> number(Token token);
+    std::unique_ptr<Expression> grouping(Token token);
+    std::unique_ptr<Expression> binary(Token token, std::unique_ptr<Expression> left);
+    std::unique_ptr<Expression> unary(Token token);
+    std::unique_ptr<Statement> print();
 
     void advance();
     void consume(TokenType type, const std::string &message);
 
-    ParseRule &get_rule(TokenType type) { return rules[type]; }
+    ParseRule &rule_for(TokenType type) { return rules[type]; }
 };

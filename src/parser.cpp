@@ -9,35 +9,35 @@
 #include "parser.hpp"
 #include "token.hpp"
 
-std::unique_ptr<Statement> Parser::parse_statement() {
+std::unique_ptr<Statement> Parser::statement() {
     if (this->peek->type == TokenType::PRINT) {
-        return parse_print();
+        return print();
     } else {
-        return parse_expression_statement();
+        return expression_statement();
     }
 }
 
-std::unique_ptr<ExpressionStatement> Parser::parse_expression_statement() {
-    std::unique_ptr<Expression> expression = parse_expression();
+std::unique_ptr<ExpressionStatement> Parser::expression_statement() {
+    std::unique_ptr<Expression> expr = expression();
     consume(TokenType::SEMICOLON, "Expected ';' after expression.");
 
-    return std::make_unique<ExpressionStatement>(std::move(expression));
+    return std::make_unique<ExpressionStatement>(std::move(expr));
 }
 
-std::unique_ptr<Expression> Parser::parse_expression(Precedence prec) {
+std::unique_ptr<Expression> Parser::expression(Precedence prec) {
     advance();
 
-    ParseRule &prefix_rule = get_rule(this->current->type);
+    ParseRule &prefix_rule = rule_for(this->current->type);
     if (!prefix_rule.prefix) {
         assert(!"No prefix function found");
     }
 
     std::unique_ptr<Expression> left = prefix_rule.prefix(this, this->current.value());
 
-    while (prec <= get_rule(this->peek->type).precedence) {
+    while (prec <= rule_for(this->peek->type).precedence) {
         advance();
 
-        ParseRule &infix_rule = get_rule(this->current->type);
+        ParseRule &infix_rule = rule_for(this->current->type);
         if (!infix_rule.infix) {
             assert(!"No infix function found");
         }
@@ -48,38 +48,36 @@ std::unique_ptr<Expression> Parser::parse_expression(Precedence prec) {
     return left;
 }
 
-std::unique_ptr<Expression> Parser::parse_grouping(Token token) {
-    std::unique_ptr<Expression> expr = parse_expression(Precedence::TERM);
+std::unique_ptr<Expression> Parser::grouping(Token token) {
+    std::unique_ptr<Expression> expr = expression(Precedence::TERM);
     consume(TokenType::RPAREN, "Expected ')' after grouping expression.");
 
     return std::make_unique<Grouping>(std::move(expr));
 }
 
-std::unique_ptr<Expression> Parser::parse_number(Token token) {
-    return std::make_unique<Number>(std::stoi(token.lexeme));
+std::unique_ptr<Expression> Parser::number(Token token) { return std::make_unique<Number>(std::stoi(token.lexeme)); }
+
+std::unique_ptr<Expression> Parser::unary(Token token) {
+    return std::make_unique<Unary>(token.lexeme, expression(Precedence::UNARY));
 }
 
-std::unique_ptr<Expression> Parser::parse_unary(Token token) {
-    return std::make_unique<Unary>(token.lexeme, parse_expression(Precedence::UNARY));
-}
-
-std::unique_ptr<Expression> Parser::parse_binary(Token token, std::unique_ptr<Expression> left) {
-    Precedence precedence = get_rule(token.type).precedence;
+std::unique_ptr<Expression> Parser::binary(Token token, std::unique_ptr<Expression> left) {
+    Precedence precedence = rule_for(token.type).precedence;
     Precedence increased_precedence = static_cast<Precedence>(static_cast<int>(precedence + 1));
 
-    return std::make_unique<Binary>(token.lexeme, std::move(left), parse_expression(increased_precedence));
+    return std::make_unique<Binary>(token.lexeme, std::move(left), expression(increased_precedence));
 }
 
-std::unique_ptr<Statement> Parser::parse_print() {
+std::unique_ptr<Statement> Parser::print() {
     advance();
     consume(TokenType::LPAREN, "Expected '(' after print.");
 
-    std::unique_ptr<Expression> expression = parse_expression();
+    std::unique_ptr<Expression> expr = expression();
 
     consume(TokenType::RPAREN, "Expected ')' after call to print.");
     consume(TokenType::SEMICOLON, "Expected ';' after call to print.");
 
-    return std::make_unique<Print>(std::move(expression));
+    return std::make_unique<Print>(std::move(expr));
 }
 
 void Parser::advance() {

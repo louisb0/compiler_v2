@@ -7,29 +7,27 @@
 
 void SyntaxTreePrinter::visitPrintStatement(const Print &node) {
     std::cout << "print(";
-    node.getExpression()->accept(*this);
+    node.expression()->accept(*this);
     std::cout << ");" << std::endl;
 }
 
-void SyntaxTreePrinter::visitExpressionStatement(const ExpressionStatement &node) {
-    node.getExpression()->accept(*this);
-}
+void SyntaxTreePrinter::visitExpressionStatement(const ExpressionStatement &node) { node.expression()->accept(*this); }
 
 void SyntaxTreePrinter::visitBinaryExpression(const Binary &node) {
-    node.getLeft()->accept(*this);
-    std::cout << " " << node.getOperator() << " ";
-    node.getRight()->accept(*this);
+    node.left()->accept(*this);
+    std::cout << " " << node.symbol() << " ";
+    node.right()->accept(*this);
 }
 
 void SyntaxTreePrinter::visitUnaryExpression(const Unary &node) {
-    std::cout << node.getOperator();
-    node.getExpression()->accept(*this);
+    std::cout << node.symbol();
+    node.expression()->accept(*this);
 }
 
 void SyntaxTreePrinter::visitGroupingExpression(const Grouping &node) {
     std::cout << "(";
-    node.getExpression()->accept(*this);
+    node.expression()->accept(*this);
     std::cout << ")";
 }
 
-void SyntaxTreePrinter::visitNumberExpression(const Number &node) { std::cout << node.getValue(); }
+void SyntaxTreePrinter::visitNumberExpression(const Number &node) { std::cout << node.value(); }

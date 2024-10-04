@@ -13,5 +13,5 @@ public:
 private:
     std::vector<TacInstruction> instructions;
 
-    int calc_stack_size();
+    int stack_size();
 };

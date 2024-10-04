@@ -13,7 +13,7 @@ class Print : public Statement {
 public:
     Print(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
 
-    const Expression *getExpression() const { return expr.get(); }
+    const Expression *expression() const { return expr.get(); }
 
     void accept(Visitor &visitor) const override { visitor.visitPrintStatement(*this); }
 
@@ -25,7 +25,7 @@ class ExpressionStatement : public Statement {
 public:
     ExpressionStatement(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
 
-    const Expression *getExpression() const { return expr.get(); }
+    const Expression *expression() const { return expr.get(); }
 
     void accept(Visitor &visitor) const override { visitor.visitExpressionStatement(*this); }
 

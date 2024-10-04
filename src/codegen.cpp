@@ -23,9 +23,9 @@ const std::string footer = R"(    /* epilogue */
 )";
 
 std::string CodeGenerator::generate() {
-    int stack_size = calc_stack_size();
+    int to_allocate = stack_size();
 
-    std::string generated_code = "    sub $" + std::to_string(stack_size) + ", %esp\n\n";
+    std::string generated_code = "    sub $" + std::to_string(to_allocate) + ", %esp\n\n";
 
     for (int i = 0; i < this->instructions.size(); i++) {
         TacInstruction inst = this->instructions.at(i);
@@ -95,7 +95,7 @@ std::string CodeGenerator::generate() {
     return header + generated_code + footer;
 }
 
-int CodeGenerator::calc_stack_size() {
+int CodeGenerator::stack_size() {
     int stack_size = 0;
     for (TacInstruction t : this->instructions) {
         if (t.op != TacOperation::PRINT)

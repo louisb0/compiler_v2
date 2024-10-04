@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     std::cout << source << std::endl;
 
     Parser *p = new Parser(source);
-    std::unique_ptr<Statement> stmt = p->parse_statement();
+    std::unique_ptr<Statement> stmt = p->statement();
 
     SyntaxTreePrinter *v = new SyntaxTreePrinter();
     stmt->accept(*v);

@@ -12,32 +12,32 @@ class Expression : public Node {};
 
 class Binary : public Expression {
 public:
-    Binary(std::string op, std::unique_ptr<Expression> left, std::unique_ptr<Expression> right)
-        : op(op), left(std::move(left)), right(std::move(right)) {};
+    Binary(std::string op_symbol, std::unique_ptr<Expression> left_node, std::unique_ptr<Expression> right_node)
+        : op_symbol(op_symbol), left_node(std::move(left_node)), right_node(std::move(right_node)) {};
 
-    const std::string &getOperator() const { return op; }
-    const Expression *getLeft() const { return left.get(); }
-    const Expression *getRight() const { return right.get(); }
+    const std::string &symbol() const { return op_symbol; }
+    const Expression *left() const { return left_node.get(); }
+    const Expression *right() const { return right_node.get(); }
 
     void accept(Visitor &visitor) const override { visitor.visitBinaryExpression(*this); }
 
 private:
-    std::string op;
-    std::unique_ptr<Expression> left;
-    std::unique_ptr<Expression> right;
+    std::string op_symbol;
+    std::unique_ptr<Expression> left_node;
+    std::unique_ptr<Expression> right_node;
 };
 
 class Unary : public Expression {
 public:
-    Unary(std::string op, std::unique_ptr<Expression> expr) : op(op), expr(std::move(expr)) {}
+    Unary(std::string op_symbol, std::unique_ptr<Expression> expr) : op_symbol(op_symbol), expr(std::move(expr)) {}
 
-    const std::string &getOperator() const { return op; }
-    const Expression *getExpression() const { return expr.get(); }
+    const std::string &symbol() const { return op_symbol; }
+    const Expression *expression() const { return expr.get(); }
 
     void accept(Visitor &visitor) const override { visitor.visitUnaryExpression(*this); }
 
 private:
-    std::string op;
+    std::string op_symbol;
     std::unique_ptr<Expression> expr;
 };
 
@@ -45,7 +45,7 @@ class Grouping : public Expression {
 public:
     Grouping(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
 
-    const Expression *getExpression() const { return expr.get(); }
+    const Expression *expression() const { return expr.get(); }
 
     void accept(Visitor &visitor) const override { visitor.visitGroupingExpression(*this); }
 
@@ -55,14 +55,14 @@ private:
 
 class Number : public Expression {
 public:
-    Number(int value) : value(value) {}
+    Number(int number) : number(number) {}
 
-    const int getValue() const { return value; }
+    const int value() const { return number; }
 
     void accept(Visitor &visitor) const override { visitor.visitNumberExpression(*this); }
 
 private:
-    int value;
+    int number;
 };
 
 // class Assignment : public Expression {
