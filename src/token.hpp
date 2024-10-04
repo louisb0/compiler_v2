@@ -30,11 +30,15 @@ struct Token {
     std::string lexeme;
     int line;
 
-    // is it bad having these attached to a struct?
-    static const std::unordered_map<TokenType, std::string> token_to_str;
-    static const std::unordered_map<std::string, TokenType> lexeme_to_token;
-
     Token(TokenType type, const std::string &lexeme, int line) : type(type), lexeme(lexeme), line(line) {}
 
-    std::string str() const;
+    std::string to_string() const;
 };
+
+namespace TokenUtils {
+    extern const std::unordered_map<TokenType, std::string> token_to_str;
+    extern const std::unordered_map<std::string, TokenType> lexeme_to_token;
+
+    bool is_keyword(const std::string &lexeme);
+    std::string token_type_to_string(TokenType type);
+} // namespace TokenUtils

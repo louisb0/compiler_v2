@@ -26,8 +26,8 @@ int main(int argc, char **argv) {
     TacGenerator *t = new TacGenerator();
     stmt->accept(*t);
 
-    for (int i = 0; i < t->instructions.size(); i++) {
-        std::cout << t->instructions.at(i).str(i) << std::endl;
+    for (size_t i = 0; i < t->instructions.size(); i++) {
+        std::cout << t->instructions.at(i).to_string(i) << std::endl;
     }
 
     CodeGenerator *g = new CodeGenerator(t->instructions);

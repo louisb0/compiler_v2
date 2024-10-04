@@ -24,10 +24,10 @@ std::unique_ptr<ExpressionStatement> Parser::expression_statement() {
     return std::make_unique<ExpressionStatement>(std::move(expr));
 }
 
-std::unique_ptr<Expression> Parser::expression(Precedence prec) {
+std::unique_ptr<Expression> Parser::expression(const Precedence prec) {
     advance();
 
-    ParseRule &prefix_rule = rule_for(this->current->type);
+    const ParseRule &prefix_rule = rule_for(this->current->type);
     if (!prefix_rule.prefix) {
         assert(!"No prefix function found");
     }
@@ -37,7 +37,7 @@ std::unique_ptr<Expression> Parser::expression(Precedence prec) {
     while (prec <= rule_for(this->peek->type).precedence) {
         advance();
 
-        ParseRule &infix_rule = rule_for(this->current->type);
+        const ParseRule &infix_rule = rule_for(this->current->type);
         if (!infix_rule.infix) {
             assert(!"No infix function found");
         }
@@ -48,20 +48,22 @@ std::unique_ptr<Expression> Parser::expression(Precedence prec) {
     return left;
 }
 
-std::unique_ptr<Expression> Parser::grouping(Token token) {
+std::unique_ptr<Expression> Parser::grouping(const Token token) {
     std::unique_ptr<Expression> expr = expression(Precedence::TERM);
     consume(TokenType::RPAREN, "Expected ')' after grouping expression.");
 
     return std::make_unique<Grouping>(std::move(expr));
 }
 
-std::unique_ptr<Expression> Parser::number(Token token) { return std::make_unique<Number>(std::stoi(token.lexeme)); }
+std::unique_ptr<Expression> Parser::number(const Token token) {
+    return std::make_unique<Number>(std::stoi(token.lexeme));
+}
 
-std::unique_ptr<Expression> Parser::unary(Token token) {
+std::unique_ptr<Expression> Parser::unary(const Token token) {
     return std::make_unique<Unary>(token.lexeme, expression(Precedence::UNARY));
 }
 
-std::unique_ptr<Expression> Parser::binary(Token token, std::unique_ptr<Expression> left) {
+std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Expression> left) {
     Precedence precedence = rule_for(token.type).precedence;
     Precedence increased_precedence = static_cast<Precedence>(static_cast<int>(precedence + 1));
 
@@ -85,10 +87,10 @@ void Parser::advance() {
     peek = scanner->read_token();
 }
 
-void Parser::consume(TokenType type, const std::string &message) {
+void Parser::consume(const TokenType type, const std::string &message) {
     if (this->peek && this->peek->type == type) {
         advance();
     } else {
-        throw std::runtime_error(message);
+        throw std::runtime_error(message); // TODO: this isn't caught and nothing is cleaned up
     }
 }

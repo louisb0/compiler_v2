@@ -15,11 +15,11 @@ enum class TacOperation {
 struct TacInstruction {
     TacInstruction(TacOperation op, int operand1, int operand2 = -1) : op(op), operand1(operand1), operand2(operand2) {}
 
-    TacOperation op;
-    int operand1;
-    int operand2;
+    const TacOperation op;
+    const int operand1;
+    const int operand2;
 
-    std::string str(int tac_index) const {
+    std::string to_string(int tac_index) const {
         std::string result = "t" + std::to_string(tac_index) + " <- ";
 
         switch (op) {

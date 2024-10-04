@@ -57,7 +57,7 @@ class Number : public Expression {
 public:
     Number(int number) : number(number) {}
 
-    const int value() const { return number; }
+    int value() const { return number; }
 
     void accept(Visitor &visitor) const override { visitor.visitNumberExpression(*this); }
 

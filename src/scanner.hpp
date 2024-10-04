@@ -11,7 +11,7 @@ public:
     Token read_token();
 
 private:
-    std::string source;
+    const std::string &source;
     int start;
     int current;
     int line;
@@ -19,7 +19,7 @@ private:
     Token number();
     Token identifier();
     void skip_whitespace();
-    bool is_eof();
     char advance();
-    char peek();
+    char peek() const;
+    bool is_eof() const;
 };

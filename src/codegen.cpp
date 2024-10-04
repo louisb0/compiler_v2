@@ -27,7 +27,7 @@ std::string CodeGenerator::generate() {
 
     std::string generated_code = "    sub $" + std::to_string(to_allocate) + ", %esp\n\n";
 
-    for (int i = 0; i < this->instructions.size(); i++) {
+    for (size_t i = 0; i < this->instructions.size(); i++) {
         TacInstruction inst = this->instructions.at(i);
 
         int result_index = i * 4;
@@ -95,7 +95,7 @@ std::string CodeGenerator::generate() {
     return header + generated_code + footer;
 }
 
-int CodeGenerator::stack_size() {
+int CodeGenerator::stack_size() const {
     int stack_size = 0;
     for (TacInstruction t : this->instructions) {
         if (t.op != TacOperation::PRINT)

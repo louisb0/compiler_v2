@@ -21,14 +21,14 @@ enum Precedence {
 class Parser;
 
 struct ParseRule {
-    std::function<std::unique_ptr<Expression>(Parser *, Token)> prefix;
-    std::function<std::unique_ptr<Expression>(Parser *, Token, std::unique_ptr<Expression> left)> infix;
-    Precedence precedence;
+    std::function<std::unique_ptr<Expression>(Parser *, const Token)> prefix;
+    std::function<std::unique_ptr<Expression>(Parser *, const Token, std::unique_ptr<Expression> left)> infix;
+    const Precedence precedence;
 
     ParseRule() : prefix(nullptr), infix(nullptr), precedence(NONE) {}
-    ParseRule(std::function<std::unique_ptr<Expression>(Parser *, Token)> prefix,
-              std::function<std::unique_ptr<Expression>(Parser *, Token, std::unique_ptr<Expression>)> infix,
-              Precedence precedence)
+    ParseRule(std::function<std::unique_ptr<Expression>(Parser *, const Token)> prefix,
+              std::function<std::unique_ptr<Expression>(Parser *, const Token, std::unique_ptr<Expression>)> infix,
+              const Precedence precedence)
         : prefix(prefix), infix(infix), precedence(precedence) {}
 };
 
@@ -49,31 +49,31 @@ private:
     std::unordered_map<TokenType, ParseRule> rules;
 
     void init_rules() {
-        rules[TokenType::NUMBER] = ParseRule(&Parser::number, nullptr, Precedence::NONE);
-        rules[TokenType::LPAREN] = ParseRule(&Parser::grouping, nullptr, Precedence::NONE);
-        rules[TokenType::RPAREN] = ParseRule();
-        rules[TokenType::COLON] = ParseRule();
-        rules[TokenType::SEMICOLON] = ParseRule();
-        rules[TokenType::EQUAL] = ParseRule();
-        rules[TokenType::PLUS] = ParseRule(nullptr, &Parser::binary, Precedence::TERM);
-        rules[TokenType::MINUS] = ParseRule(&Parser::unary, &Parser::binary, Precedence::TERM);
-        rules[TokenType::STAR] = ParseRule(nullptr, &Parser::binary, Precedence::FACTOR);
-        rules[TokenType::SLASH] = ParseRule(nullptr, &Parser::binary, Precedence::FACTOR);
-        rules[TokenType::PRINT] = ParseRule();
-        rules[TokenType::END_OF_FILE] = ParseRule();
+        rules.emplace(TokenType::NUMBER, ParseRule(&Parser::number, nullptr, Precedence::NONE));
+        rules.emplace(TokenType::LPAREN, ParseRule(&Parser::grouping, nullptr, Precedence::NONE));
+        rules.emplace(TokenType::RPAREN, ParseRule());
+        rules.emplace(TokenType::COLON, ParseRule());
+        rules.emplace(TokenType::SEMICOLON, ParseRule());
+        rules.emplace(TokenType::EQUAL, ParseRule());
+        rules.emplace(TokenType::PLUS, ParseRule(nullptr, &Parser::binary, Precedence::TERM));
+        rules.emplace(TokenType::MINUS, ParseRule(&Parser::unary, &Parser::binary, Precedence::TERM));
+        rules.emplace(TokenType::STAR, ParseRule(nullptr, &Parser::binary, Precedence::FACTOR));
+        rules.emplace(TokenType::SLASH, ParseRule(nullptr, &Parser::binary, Precedence::FACTOR));
+        rules.emplace(TokenType::PRINT, ParseRule());
+        rules.emplace(TokenType::END_OF_FILE, ParseRule());
     }
 
-    std::unique_ptr<Expression> expression(Precedence prec = Precedence::TERM);
+    std::unique_ptr<Expression> expression(const Precedence prec = Precedence::TERM);
     std::unique_ptr<ExpressionStatement> expression_statement();
 
-    std::unique_ptr<Expression> number(Token token);
-    std::unique_ptr<Expression> grouping(Token token);
-    std::unique_ptr<Expression> binary(Token token, std::unique_ptr<Expression> left);
-    std::unique_ptr<Expression> unary(Token token);
+    std::unique_ptr<Expression> number(const Token token);
+    std::unique_ptr<Expression> grouping(const Token token);
+    std::unique_ptr<Expression> binary(const Token token, std::unique_ptr<Expression> left);
+    std::unique_ptr<Expression> unary(const Token token);
     std::unique_ptr<Statement> print();
 
     void advance();
-    void consume(TokenType type, const std::string &message);
+    void consume(const TokenType type, const std::string &message);
 
-    ParseRule &rule_for(TokenType type) { return rules[type]; }
+    const ParseRule &rule_for(TokenType type) const { return rules.at(type); }
 };

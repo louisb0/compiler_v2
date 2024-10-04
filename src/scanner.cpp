@@ -64,9 +64,8 @@ Token Scanner::identifier() {
 
     std::string lexeme = this->source.substr(this->start, this->current - this->start);
 
-    auto it = Token::lexeme_to_token.find(lexeme);
-    if (it != Token::lexeme_to_token.end()) {
-        return Token(it->second, lexeme, this->line);
+    if (TokenUtils::is_keyword(lexeme)) {
+        return Token(TokenUtils::lexeme_to_token.at(lexeme), lexeme, this->line);
     }
 
     return Token(TokenType::IDENTIFIER, lexeme, this->line);
@@ -93,8 +92,8 @@ void Scanner::skip_whitespace() {
     }
 }
 
-bool Scanner::is_eof() { return this->current == this->source.length(); }
-
 char Scanner::advance() { return this->source[this->current++]; }
 
-char Scanner::peek() { return this->source[this->current]; }
+char Scanner::peek() const { return this->source[this->current]; }
+
+bool Scanner::is_eof() const { return this->current == this->source.length(); }
