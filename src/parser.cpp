@@ -2,12 +2,23 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "ast/expressions.hpp"
 #include "ast/statements.hpp"
 
 #include "parser.hpp"
 #include "token.hpp"
+
+std::unique_ptr<Program> Parser::parse() {
+    std::vector<std::unique_ptr<Statement>> stmts;
+
+    while (this->peek->type != TokenType::END_OF_FILE) {
+        stmts.push_back(std::move(statement()));
+    }
+
+    return std::make_unique<Program>(std::move(stmts));
+}
 
 std::unique_ptr<Statement> Parser::statement() {
     if (this->peek->type == TokenType::PRINT) {

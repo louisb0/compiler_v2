@@ -3,7 +3,6 @@
 
 #include "token.hpp"
 
-// TODO: reconsider this when you wake up
 namespace TokenUtils {
     const std::unordered_map<TokenType, std::string> token_to_string = {
         {TokenType::LET, "LET"},       {TokenType::TYPE_I32, "TYPE_I32"},   {TokenType::IDENTIFIER, "IDENTIFIER"},

@@ -5,6 +5,7 @@
 
 class TacInstruction;
 
+class Program;
 class Print;
 class ExpressionStatement;
 class Binary;
@@ -16,6 +17,7 @@ class Visitor {
 public:
     virtual ~Visitor() = default;
 
+    virtual void visit_program(const Program &node) = 0;
     virtual void visit_print_statement(const Print &node) = 0;
     virtual void visit_expression_statement(const ExpressionStatement &node) = 0;
     virtual void visit_binary_expression(const Binary &node) = 0;
@@ -30,6 +32,7 @@ public:
 
     void write_to(const std::string &filename);
 
+    void visit_program(const Program &node) override;
     void visit_print_statement(const Print &node) override;
     void visit_expression_statement(const ExpressionStatement &node) override;
     void visit_binary_expression(const Binary &node) override;
@@ -49,6 +52,7 @@ class TacGenerator : public Visitor {
 public:
     std::vector<TacInstruction> instructions;
 
+    void visit_program(const Program &node) override;
     void visit_print_statement(const Print &node) override;
     void visit_expression_statement(const ExpressionStatement &node) override;
     void visit_binary_expression(const Binary &node) override;

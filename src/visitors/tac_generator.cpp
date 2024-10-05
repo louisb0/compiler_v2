@@ -4,6 +4,12 @@
 
 #include "visitors.hpp"
 
+void TacGenerator::visit_program(const Program &node) {
+    for (auto &stmt : node.statements()) {
+        stmt->accept(*this);
+    }
+}
+
 void TacGenerator::visit_print_statement(const Print &node) {
     node.expression()->accept(*this);
 

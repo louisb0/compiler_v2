@@ -9,6 +9,18 @@
 
 class Statement : public Node {};
 
+class Program : public Statement {
+public:
+    Program(std::vector<std::unique_ptr<Statement>> stmts) : stmts(std::move(stmts)) {}
+
+    const std::vector<std::unique_ptr<Statement>> &statements() const { return stmts; }
+
+    void accept(Visitor &visitor) const override { visitor.visit_program(*this); }
+
+private:
+    std::vector<std::unique_ptr<Statement>> stmts;
+};
+
 class Print : public Statement {
 public:
     Print(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}

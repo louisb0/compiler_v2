@@ -39,7 +39,7 @@ public:
         init_rules();
     }
 
-    std::unique_ptr<Statement> statement();
+    std::unique_ptr<Program> parse();
 
 private:
     std::unique_ptr<Scanner> scanner;
@@ -63,9 +63,10 @@ private:
         rules.emplace(TokenType::END_OF_FILE, ParseRule());
     }
 
-    std::unique_ptr<Expression> expression(const Precedence prec = Precedence::TERM);
+    std::unique_ptr<Statement> statement();
     std::unique_ptr<ExpressionStatement> expression_statement();
 
+    std::unique_ptr<Expression> expression(const Precedence prec = Precedence::TERM);
     std::unique_ptr<Expression> number(const Token token);
     std::unique_ptr<Expression> grouping(const Token token);
     std::unique_ptr<Expression> binary(const Token token, std::unique_ptr<Expression> left);

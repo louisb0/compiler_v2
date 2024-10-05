@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 #include "../ast/expressions.hpp"
 #include "../ast/statements.hpp"
@@ -25,6 +26,16 @@ std::string SyntaxTreePrinter::create_node(const std::string &label) {
 
     return node_id;
 }
+
+void SyntaxTreePrinter::visit_program(const Program &node) {
+    std::string node_id = create_node("Program");
+
+    stack.push_back(node_count - 1);
+    for (auto &stmt : node.statements()) {
+        stmt->accept(*this);
+    }
+    stack.pop_back();
+};
 
 void SyntaxTreePrinter::visit_print_statement(const Print &node) {
     std::string node_id = create_node("Print");
