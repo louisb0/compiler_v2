@@ -4,9 +4,8 @@
 #include <string>
 
 #include "../visitors/visitors.hpp"
-#include "node.hpp"
 
-class Visitor;
+#include "node.hpp"
 
 class Expression : public Node {};
 
@@ -19,7 +18,7 @@ public:
     const Expression *left() const { return left_node.get(); }
     const Expression *right() const { return right_node.get(); }
 
-    void accept(Visitor &visitor) const override { visitor.visitBinaryExpression(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_binary_expression(*this); }
 
 private:
     std::string op_symbol;
@@ -34,7 +33,7 @@ public:
     const std::string &symbol() const { return op_symbol; }
     const Expression *expression() const { return expr.get(); }
 
-    void accept(Visitor &visitor) const override { visitor.visitUnaryExpression(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_unary_expression(*this); }
 
 private:
     std::string op_symbol;
@@ -47,7 +46,7 @@ public:
 
     const Expression *expression() const { return expr.get(); }
 
-    void accept(Visitor &visitor) const override { visitor.visitGroupingExpression(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_grouping_expression(*this); }
 
 private:
     std::unique_ptr<Expression> expr;
@@ -59,7 +58,7 @@ public:
 
     int value() const { return number; }
 
-    void accept(Visitor &visitor) const override { visitor.visitNumberExpression(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_number_expression(*this); }
 
 private:
     int number;

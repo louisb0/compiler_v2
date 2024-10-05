@@ -15,7 +15,7 @@ public:
 
     const Expression *expression() const { return expr.get(); }
 
-    void accept(Visitor &visitor) const override { visitor.visitPrintStatement(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_print_statement(*this); }
 
 private:
     std::unique_ptr<Expression> expr;
@@ -27,7 +27,7 @@ public:
 
     const Expression *expression() const { return expr.get(); }
 
-    void accept(Visitor &visitor) const override { visitor.visitExpressionStatement(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_expression_statement(*this); }
 
 private:
     std::unique_ptr<Expression> expr;

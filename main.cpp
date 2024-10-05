@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
     SyntaxTreePrinter *v = new SyntaxTreePrinter();
     stmt->accept(*v);
-    std::cout << std::endl;
+    v->write_to("ast.mermaid");
 
     TacGenerator *t = new TacGenerator();
     stmt->accept(*t);
