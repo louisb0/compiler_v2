@@ -36,7 +36,7 @@ struct Token {
 };
 
 namespace TokenUtils {
-    extern const std::unordered_map<TokenType, std::string> token_to_str;
+    extern const std::unordered_map<TokenType, std::string> token_to_string;
     extern const std::unordered_map<std::string, TokenType> lexeme_to_token;
 
     bool is_keyword(const std::string &lexeme);
