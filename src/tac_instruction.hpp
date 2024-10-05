@@ -4,6 +4,8 @@
 
 enum class TacOperation {
     VALUE,
+    VARIABLE,
+    ASSIGN,
     NEG,
     ADD,
     SUB,
@@ -20,11 +22,20 @@ struct TacInstruction {
     const int operand2;
 
     std::string to_string(int tac_index) const {
-        std::string result = "t" + std::to_string(tac_index) + " <- ";
+        std::string result = "";
+        if (op != TacOperation::ASSIGN)
+            result += "t" + std::to_string(tac_index) + " <- ";
 
         switch (op) {
         case TacOperation::VALUE:
             result += std::to_string(operand1);
+            break;
+        case TacOperation::VARIABLE:
+            result += "t" + std::to_string(operand1);
+            break;
+        // TODO: is this ordering natural?
+        case TacOperation::ASSIGN:
+            result += "t" + std::to_string(operand1) + " <- t" + std::to_string(operand2);
             break;
         case TacOperation::NEG:
             result += "neg t" + std::to_string(operand1);

@@ -14,10 +14,38 @@ std::unique_ptr<Program> Parser::parse() {
     std::vector<std::unique_ptr<Statement>> stmts;
 
     while (this->peek->type != TokenType::END_OF_FILE) {
-        stmts.push_back(std::move(statement()));
+        stmts.push_back(std::move(declaration()));
     }
 
     return std::make_unique<Program>(std::move(stmts));
+}
+
+std::unique_ptr<Statement> Parser::declaration() {
+    if (this->peek->type == TokenType::LET) {
+        return var_declaration();
+    } else {
+        return statement();
+    }
+}
+
+std::unique_ptr<Declaration> Parser::var_declaration() {
+    advance();
+
+    consume(TokenType::IDENTIFIER, "Expected variable name after 'let'.");
+    Token identifier = this->current.value();
+
+    consume(TokenType::COLON, "Expected type definition as part of variable declaration.");
+
+    // TODO: add type to string, token to type
+    consume(TokenType::TYPE_I32, "Expected type definition as part of variable declaration.");
+    Type type = Type::I32;
+
+    consume(TokenType::EQUAL, "Expected '=' as part of variable declaration.");
+
+    std::unique_ptr<Expression> expr = expression();
+    consume(TokenType::SEMICOLON, "Expected ';' after variable declaration.");
+
+    return std::make_unique<Declaration>(identifier, type, std::move(expr));
 }
 
 std::unique_ptr<Statement> Parser::statement() {
@@ -26,6 +54,18 @@ std::unique_ptr<Statement> Parser::statement() {
     } else {
         return expression_statement();
     }
+}
+
+std::unique_ptr<Statement> Parser::print() {
+    advance();
+    consume(TokenType::LPAREN, "Expected '(' after print.");
+
+    std::unique_ptr<Expression> expr = expression();
+
+    consume(TokenType::RPAREN, "Expected ')' after call to print.");
+    consume(TokenType::SEMICOLON, "Expected ';' after call to print.");
+
+    return std::make_unique<Print>(std::move(expr));
 }
 
 std::unique_ptr<ExpressionStatement> Parser::expression_statement() {
@@ -81,16 +121,16 @@ std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Ex
     return std::make_unique<Binary>(token.lexeme, std::move(left), expression(increased_precedence));
 }
 
-std::unique_ptr<Statement> Parser::print() {
-    advance();
-    consume(TokenType::LPAREN, "Expected '(' after print.");
+std::unique_ptr<Expression> Parser::variable(const Token token) {
+    // TODO: this may not be valid
+    if (this->peek->type == TokenType::EQUAL) {
+        advance();
+        std::unique_ptr<Expression> expr = expression();
 
-    std::unique_ptr<Expression> expr = expression();
-
-    consume(TokenType::RPAREN, "Expected ')' after call to print.");
-    consume(TokenType::SEMICOLON, "Expected ';' after call to print.");
-
-    return std::make_unique<Print>(std::move(expr));
+        return std::make_unique<Assignment>(token, std::move(expr));
+    } else {
+        return std::make_unique<Variable>(token);
+    }
 }
 
 void Parser::advance() {

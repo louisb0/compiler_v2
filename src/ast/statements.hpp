@@ -2,10 +2,15 @@
 
 #include <memory>
 
+#include "../token.hpp"
 #include "../visitors/visitors.hpp"
 
 #include "expressions.hpp"
 #include "node.hpp"
+
+enum class Type {
+    I32,
+};
 
 class Statement : public Node {};
 
@@ -19,6 +24,22 @@ public:
 
 private:
     std::vector<std::unique_ptr<Statement>> stmts;
+};
+
+class Declaration : public Statement {
+public:
+    Declaration(Token token, Type type, std::unique_ptr<Expression> expr)
+        : token(token), expr(std::move(expr)), type(type) {}
+
+    const Token name() const { return token; }
+    const Expression *expression() const { return expr.get(); }
+
+    void accept(Visitor &visitor) const override { visitor.visit_declaration(*this); }
+
+private:
+    Token token;
+    std::unique_ptr<Expression> expr;
+    Type type;
 };
 
 class Print : public Statement {
@@ -44,20 +65,3 @@ public:
 private:
     std::unique_ptr<Expression> expr;
 };
-
-// class Declaration : public Statement {
-// public:
-//     Declaration(Token name, std::unique_ptr<Expression> expr, Type type)
-//         : name(name), expr(std::move(expr)), type(type) {}
-//
-//     void print(int indent = 0) const override {
-//         printIndent(indent);
-//         std::cout << "Declaration: " << name.lexeme << std::endl;
-//         expr->print(indent + 1);
-//     }
-//
-// private:
-//     Token name;
-//     std::unique_ptr<Expression> expr;
-//     Type type;
-// };

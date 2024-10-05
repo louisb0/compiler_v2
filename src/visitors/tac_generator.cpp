@@ -4,11 +4,27 @@
 
 #include "visitors.hpp"
 
+const unsigned int TEMP_BAD_DECLARATION = 999;
+const unsigned int TEMP_BAD_VARIABLE = 888;
+
 void TacGenerator::visit_program(const Program &node) {
     for (auto &stmt : node.statements()) {
         stmt->accept(*this);
     }
 }
+
+void TacGenerator::visit_declaration(const Declaration &node) {
+    node.expression()->accept(*this);
+
+    this->variable_location[node.name().lexeme] = this->instructions.size() - 1;
+}
+
+void TacGenerator::visit_assignment_statement(const Assignment &node) {
+    int declaration = this->variable_location[node.name().lexeme];
+    node.expression()->accept(*this);
+
+    this->instructions.push_back(TacInstruction(TacOperation::ASSIGN, declaration, this->instructions.size() - 1));
+};
 
 void TacGenerator::visit_print_statement(const Print &node) {
     node.expression()->accept(*this);
@@ -54,4 +70,10 @@ void TacGenerator::visit_grouping_expression(const Grouping &node) { node.expres
 
 void TacGenerator::visit_number_expression(const Number &node) {
     this->instructions.push_back(TacInstruction(TacOperation::VALUE, node.value()));
+}
+
+void TacGenerator::visit_variable_expression(const Variable &node) {
+    int declaration = this->variable_location[node.name().lexeme];
+
+    this->instructions.push_back(TacInstruction(TacOperation::VARIABLE, declaration));
 }

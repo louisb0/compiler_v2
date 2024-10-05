@@ -3,11 +3,39 @@
 #include <memory>
 #include <string>
 
+#include "../token.hpp"
 #include "../visitors/visitors.hpp"
 
 #include "node.hpp"
 
 class Expression : public Node {};
+
+class Variable : public Expression {
+public:
+    Variable(Token token) : token(token) {}
+
+    const Token name() const { return token; }
+
+    void accept(Visitor &visitor) const override { visitor.visit_variable_expression(*this); }
+
+private:
+    Token token;
+};
+
+// TODO: this doesnt evaluate to things
+class Assignment : public Expression {
+public:
+    Assignment(Token token, std::unique_ptr<Expression> expr) : token(token), expr(std::move(expr)) {}
+
+    const Token name() const { return token; }
+    const Expression *expression() const { return expr.get(); }
+
+    void accept(Visitor &visitor) const override { visitor.visit_assignment_statement(*this); }
+
+private:
+    Token token;
+    std::unique_ptr<Expression> expr;
+};
 
 class Binary : public Expression {
 public:
@@ -63,31 +91,3 @@ public:
 private:
     int number;
 };
-
-// class Assignment : public Expression {
-// public:
-//     Assignment(Token name, std::unique_ptr<Expression> expr) : name(name), expr(std::move(expr)) {}
-//
-//     void print(int indent = 0) const override {
-//         printIndent(indent);
-//         std::cout << "Assignment: " << name.lexeme << std::endl;
-//         expr->print(indent + 1);
-//     }
-//
-// private:
-//     Token name;
-//     std::unique_ptr<Expression> expr;
-// };
-
-// class Variable : public Expression {
-// public:
-//     Variable(Token name) : name(name) {}
-//
-//     void print(int indent = 0) const override {
-//         printIndent(indent);
-//         std::cout << "Variable: " << name.lexeme << std::endl;
-//     }
-//
-// private:
-//     Token name;
-// };

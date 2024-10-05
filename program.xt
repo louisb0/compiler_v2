@@ -1,1 +1,12 @@
-print(10 / 2 * 2 + (3 - 1) * 4);
+let a: i32 = 5;
+let b: i32 = 1;
+
+print(a);
+
+a = a * (b + 1);
+
+print(a);
+
+b = a;
+
+print(b);

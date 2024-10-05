@@ -58,7 +58,7 @@ Token Scanner::number() {
 }
 
 Token Scanner::identifier() {
-    while (isalpha(peek())) {
+    while (isalpha(peek()) || isdigit(peek())) {
         advance();
     }
 

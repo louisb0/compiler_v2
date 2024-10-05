@@ -40,6 +40,20 @@ std::string CodeGenerator::generate() {
             // clang-format on
             break;
 
+        case TacOperation::VARIABLE:
+            // clang-format off
+            generated_code += "    movl -" + std::to_string(4 * inst.operand1) + "(%ebp), %eax\n"
+                              "    movl %eax, -" + std::to_string(result_index) + "(%ebp)\n\n";
+            // clang-format on
+            break;
+
+        case TacOperation::ASSIGN:
+            // clang-format off
+            generated_code += "    movl -" + std::to_string(4 * inst.operand2) + "(%ebp), %eax\n"
+                              "    movl %eax, -" + std::to_string(4 * inst.operand1) + "(%ebp)\n\n";
+            // clang-format on
+            break;
+
         case TacOperation::NEG:
             // clang-format off
             generated_code += "    movl -" + std::to_string(4 * inst.operand1) + "(%ebp), %eax\n"

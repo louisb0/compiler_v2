@@ -37,6 +37,26 @@ void SyntaxTreePrinter::visit_program(const Program &node) {
     stack.pop_back();
 };
 
+void SyntaxTreePrinter::visit_declaration(const Declaration &node) {
+    // TODO: add type to string, token to type
+    std::string node_id = create_node("Declaration");
+
+    stack.push_back(node_count - 1);
+    create_node(node.name().lexeme);
+    create_node("I32");
+    node.expression()->accept(*this);
+    stack.pop_back();
+}
+
+void SyntaxTreePrinter::visit_assignment_statement(const Assignment &node) {
+    std::string node_id = create_node("Assignment");
+
+    stack.push_back(node_count - 1);
+    create_node(node.name().lexeme);
+    node.expression()->accept(*this);
+    stack.pop_back();
+};
+
 void SyntaxTreePrinter::visit_print_statement(const Print &node) {
     std::string node_id = create_node("Print");
 
@@ -79,3 +99,5 @@ void SyntaxTreePrinter::visit_grouping_expression(const Grouping &node) {
 }
 
 void SyntaxTreePrinter::visit_number_expression(const Number &node) { create_node(std::to_string(node.value())); }
+
+void SyntaxTreePrinter::visit_variable_expression(const Variable &node) { create_node(node.name().lexeme); }
