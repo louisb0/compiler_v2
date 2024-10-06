@@ -4,9 +4,6 @@
 
 #include "visitors.hpp"
 
-const unsigned int TEMP_BAD_DECLARATION = 999;
-const unsigned int TEMP_BAD_VARIABLE = 888;
-
 void TacGenerator::visit_program(const Program &node) {
     for (auto &stmt : node.statements()) {
         stmt->accept(*this);
@@ -42,7 +39,7 @@ void TacGenerator::visit_binary_expression(const Binary &node) {
     int rightIndex = this->instructions.size() - 1;
 
     TacOperation op;
-    switch (node.symbol()[0]) {
+    switch (node.symbol().lexeme[0]) {
     case '+':
         op = TacOperation::ADD;
         break;

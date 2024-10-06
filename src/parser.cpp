@@ -101,11 +101,11 @@ std::unique_ptr<Expression> Parser::variable(const Token token) {
 std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Expression> left) {
     auto right = expression(rule_for(token.type).next_precedence());
 
-    return std::make_unique<Binary>(token.lexeme, std::move(left), std::move(right));
+    return std::make_unique<Binary>(token, std::move(left), std::move(right));
 }
 
 std::unique_ptr<Expression> Parser::unary(const Token token) {
-    return std::make_unique<Unary>(token.lexeme, expression(Precedence::UNARY));
+    return std::make_unique<Unary>(token, expression(Precedence::UNARY));
 }
 
 std::unique_ptr<Expression> Parser::grouping(const Token token) {

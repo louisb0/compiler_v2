@@ -73,7 +73,7 @@ void SyntaxTreePrinter::visit_expression_statement(const ExpressionStatement &no
 }
 
 void SyntaxTreePrinter::visit_binary_expression(const Binary &node) {
-    std::string node_id = create_node(node.symbol());
+    std::string node_id = create_node(node.symbol().lexeme);
 
     stack.push_back(node_count - 1);
     node.left()->accept(*this);
@@ -82,7 +82,7 @@ void SyntaxTreePrinter::visit_binary_expression(const Binary &node) {
 }
 
 void SyntaxTreePrinter::visit_unary_expression(const Unary &node) {
-    std::string node_id = create_node(node.symbol());
+    std::string node_id = create_node(node.symbol().lexeme);
 
     stack.push_back(node_count - 1);
     node.expression()->accept(*this);
