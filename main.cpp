@@ -17,14 +17,17 @@ int main(int argc, char **argv) {
     std::cout << source << std::endl;
 
     Parser *p = new Parser(source);
-    std::unique_ptr<Program> stmt = p->parse();
+    std::unique_ptr<Program> program = p->parse();
 
     SyntaxTreePrinter *v = new SyntaxTreePrinter();
-    stmt->accept(*v);
+    program->accept(*v);
     v->write_to("ast.mermaid");
 
+    VariableResolver *r = new VariableResolver();
+    program->accept(*r);
+
     TacGenerator *t = new TacGenerator();
-    stmt->accept(*t);
+    program->accept(*t);
 
     for (size_t i = 0; i < t->instructions.size(); i++) {
         std::cout << t->instructions.at(i).to_string(i) << std::endl;
@@ -39,7 +42,8 @@ int main(int argc, char **argv) {
     out << g->generate();
     out.close();
 
-    delete p;
-    delete v;
     delete t;
+    delete r;
+    delete v;
+    delete p;
 }

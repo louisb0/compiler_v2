@@ -80,7 +80,7 @@ std::unique_ptr<Expression> Parser::expression(const Precedence prec) {
 
     const ParseRule &prefix_rule = rule_for(this->current->type);
     if (!prefix_rule.prefix) {
-        assert(!"No prefix function found");
+        std::runtime_error("No prefix function found");
     }
 
     std::unique_ptr<Expression> left = prefix_rule.prefix(this, this->current.value());
@@ -90,7 +90,7 @@ std::unique_ptr<Expression> Parser::expression(const Precedence prec) {
 
         const ParseRule &infix_rule = rule_for(this->current->type);
         if (!infix_rule.infix) {
-            assert(!"No infix function found");
+            std::runtime_error("No infix function found");
         }
 
         left = infix_rule.infix(this, this->current.value(), std::move(left));
@@ -122,7 +122,6 @@ std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Ex
 }
 
 std::unique_ptr<Expression> Parser::variable(const Token token) {
-    // TODO: this may not be valid
     if (this->peek->type == TokenType::EQUAL) {
         advance();
         std::unique_ptr<Expression> expr = expression();
@@ -142,6 +141,6 @@ void Parser::consume(const TokenType type, const std::string &message) {
     if (this->peek && this->peek->type == type) {
         advance();
     } else {
-        throw std::runtime_error(message); // TODO: this isn't caught and nothing is cleaned up
+        throw std::runtime_error(message);
     }
 }

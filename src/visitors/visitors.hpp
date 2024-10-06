@@ -3,10 +3,14 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
+
+#include "../token.hpp"
 
 class TacInstruction;
 
+class Node;
 class Program;
 class Declaration;
 class Assignment;
@@ -66,7 +70,6 @@ public:
     void visit_program(const Program &node) override;
     void visit_declaration(const Declaration &node) override;
     void visit_assignment_statement(const Assignment &node) override;
-    ;
     void visit_print_statement(const Print &node) override;
     void visit_expression_statement(const ExpressionStatement &node) override;
     void visit_binary_expression(const Binary &node) override;
@@ -77,4 +80,28 @@ public:
 
 private:
     std::unordered_map<std::string, int> variable_location;
+};
+
+class VariableResolver : public Visitor {
+public:
+    void visit_program(const Program &node) override;
+    void visit_declaration(const Declaration &node) override;
+    void visit_assignment_statement(const Assignment &node) override;
+    void visit_print_statement(const Print &node) override;
+    void visit_expression_statement(const ExpressionStatement &node) override;
+    void visit_binary_expression(const Binary &node) override;
+    void visit_unary_expression(const Unary &node) override;
+    void visit_grouping_expression(const Grouping &node) override;
+    void visit_number_expression(const Number &node) override;
+    void visit_variable_expression(const Variable &node) override;
+
+private:
+    std::unordered_set<std::string> declared_variables;
+    std::vector<const Node *> stack;
+
+    void declare_variable(const Token token) { declared_variables.insert(token.lexeme); }
+
+    bool variable_exists(const Token token) {
+        return declared_variables.find(token.lexeme) != declared_variables.end();
+    }
 };
