@@ -30,6 +30,8 @@ struct ParseRule {
               std::function<std::unique_ptr<Expression>(Parser *, const Token, std::unique_ptr<Expression>)> infix,
               const Precedence precedence)
         : prefix(prefix), infix(infix), precedence(precedence) {}
+
+    Precedence next_precedence() const { return static_cast<Precedence>(static_cast<int>(precedence) + 1); }
 };
 
 class Parser {
@@ -83,8 +85,11 @@ private:
     std::unique_ptr<Expression> grouping(const Token token);
     std::unique_ptr<Expression> number(const Token token);
 
+    Type parse_type();
+
     void advance();
     void consume(const TokenType type, const std::string &message);
+    bool match(const TokenType type);
 
     const ParseRule &rule_for(TokenType type) const { return rules.at(type); }
 };

@@ -21,35 +21,33 @@ std::unique_ptr<Program> Parser::parse() {
 }
 
 std::unique_ptr<Statement> Parser::declaration() {
-    if (this->peek->type == TokenType::LET) {
-        return var_declaration();
+    std::unique_ptr<Statement> stmt;
+    if (match(TokenType::LET)) {
+        stmt = var_declaration();
     } else {
-        return statement();
+        stmt = statement();
     }
+
+    consume(TokenType::SEMICOLON, "Expected ';' after statement or declaration.");
+    return stmt;
 }
 
 std::unique_ptr<Declaration> Parser::var_declaration() {
-    advance();
-
     consume(TokenType::IDENTIFIER, "Expected variable name after 'let'.");
     Token identifier = this->current.value();
 
     consume(TokenType::COLON, "Expected type definition as part of variable declaration.");
-
-    // TODO: add type to string, token to type
-    consume(TokenType::TYPE_I32, "Expected type definition as part of variable declaration.");
-    Type type = Type::I32;
+    Type type = parse_type();
 
     consume(TokenType::EQUAL, "Expected '=' as part of variable declaration.");
 
     std::unique_ptr<Expression> expr = expression();
-    consume(TokenType::SEMICOLON, "Expected ';' after variable declaration.");
 
     return std::make_unique<Declaration>(identifier, type, std::move(expr));
 }
 
 std::unique_ptr<Statement> Parser::statement() {
-    if (this->peek->type == TokenType::PRINT) {
+    if (match(TokenType::PRINT)) {
         return print();
     } else {
         return expression_statement();
@@ -57,22 +55,15 @@ std::unique_ptr<Statement> Parser::statement() {
 }
 
 std::unique_ptr<Statement> Parser::print() {
-    advance();
-    consume(TokenType::LPAREN, "Expected '(' after print.");
-
+    consume(TokenType::LPAREN, "Expected '(' as part of call to print.");
     std::unique_ptr<Expression> expr = expression();
-
-    consume(TokenType::RPAREN, "Expected ')' after call to print.");
-    consume(TokenType::SEMICOLON, "Expected ';' after call to print.");
+    consume(TokenType::RPAREN, "Expected ')' as part of call to print.");
 
     return std::make_unique<Print>(std::move(expr));
 }
 
 std::unique_ptr<ExpressionStatement> Parser::expression_statement() {
-    std::unique_ptr<Expression> expr = expression();
-    consume(TokenType::SEMICOLON, "Expected ';' after expression.");
-
-    return std::make_unique<ExpressionStatement>(std::move(expr));
+    return std::make_unique<ExpressionStatement>(std::move(expression()));
 }
 
 std::unique_ptr<Expression> Parser::expression(const Precedence prec) {
@@ -100,21 +91,17 @@ std::unique_ptr<Expression> Parser::expression(const Precedence prec) {
 }
 
 std::unique_ptr<Expression> Parser::variable(const Token token) {
-    if (this->peek->type == TokenType::EQUAL) {
-        advance();
-        std::unique_ptr<Expression> expr = expression();
-
-        return std::make_unique<Assignment>(token, std::move(expr));
+    if (match(TokenType::EQUAL)) {
+        return std::make_unique<Assignment>(token, std::move(expression()));
     } else {
         return std::make_unique<Variable>(token);
     }
 }
 
 std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Expression> left) {
-    Precedence precedence = rule_for(token.type).precedence;
-    Precedence increased_precedence = static_cast<Precedence>(static_cast<int>(precedence + 1));
+    auto right = expression(rule_for(token.type).next_precedence());
 
-    return std::make_unique<Binary>(token.lexeme, std::move(left), expression(increased_precedence));
+    return std::make_unique<Binary>(token.lexeme, std::move(left), std::move(right));
 }
 
 std::unique_ptr<Expression> Parser::unary(const Token token) {
@@ -122,7 +109,7 @@ std::unique_ptr<Expression> Parser::unary(const Token token) {
 }
 
 std::unique_ptr<Expression> Parser::grouping(const Token token) {
-    std::unique_ptr<Expression> expr = expression(Precedence::TERM);
+    auto expr = expression(Precedence::TERM);
     consume(TokenType::RPAREN, "Expected ')' after grouping expression.");
 
     return std::make_unique<Grouping>(std::move(expr));
@@ -142,5 +129,22 @@ void Parser::consume(const TokenType type, const std::string &message) {
         advance();
     } else {
         throw std::runtime_error(message);
+    }
+}
+
+bool Parser::match(const TokenType type) {
+    if (this->peek && this->peek->type == type) {
+        advance();
+        return true;
+    }
+
+    return false;
+}
+
+Type Parser::parse_type() {
+    if (match(TokenType::TYPE_I32)) {
+        return Type::I32;
+    } else {
+        throw std::runtime_error("Expected a valid type.");
     }
 }

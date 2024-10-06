@@ -19,7 +19,7 @@ void TacGenerator::visit_declaration_statement(const Declaration &node) {
     this->variable_location[node.name().lexeme] = this->instructions.size() - 1;
 }
 
-void TacGenerator::visit_assignment_statement(const Assignment &node) {
+void TacGenerator::visit_assignment_expression(const Assignment &node) {
     int declaration = this->variable_location[node.name().lexeme];
     node.expression()->accept(*this);
 
