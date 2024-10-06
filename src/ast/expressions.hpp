@@ -10,6 +10,21 @@
 
 class Expression : public Node {};
 
+// TODO: this doesnt evaluate to things
+class Assignment : public Expression {
+public:
+    Assignment(Token token, std::unique_ptr<Expression> expr) : token(token), expr(std::move(expr)) {}
+
+    const Token name() const { return token; }
+    const Expression *expression() const { return expr.get(); }
+
+    void accept(Visitor &visitor) const override { visitor.visit_assignment_expression(*this); }
+
+private:
+    Token token;
+    std::unique_ptr<Expression> expr;
+};
+
 class Variable : public Expression {
 public:
     Variable(Token token) : token(token) {}
@@ -20,21 +35,6 @@ public:
 
 private:
     Token token;
-};
-
-// TODO: this doesnt evaluate to things
-class Assignment : public Expression {
-public:
-    Assignment(Token token, std::unique_ptr<Expression> expr) : token(token), expr(std::move(expr)) {}
-
-    const Token name() const { return token; }
-    const Expression *expression() const { return expr.get(); }
-
-    void accept(Visitor &visitor) const override { visitor.visit_assignment_statement(*this); }
-
-private:
-    Token token;
-    std::unique_ptr<Expression> expr;
 };
 
 class Binary : public Expression {

@@ -99,28 +99,6 @@ std::unique_ptr<Expression> Parser::expression(const Precedence prec) {
     return left;
 }
 
-std::unique_ptr<Expression> Parser::grouping(const Token token) {
-    std::unique_ptr<Expression> expr = expression(Precedence::TERM);
-    consume(TokenType::RPAREN, "Expected ')' after grouping expression.");
-
-    return std::make_unique<Grouping>(std::move(expr));
-}
-
-std::unique_ptr<Expression> Parser::number(const Token token) {
-    return std::make_unique<Number>(std::stoi(token.lexeme));
-}
-
-std::unique_ptr<Expression> Parser::unary(const Token token) {
-    return std::make_unique<Unary>(token.lexeme, expression(Precedence::UNARY));
-}
-
-std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Expression> left) {
-    Precedence precedence = rule_for(token.type).precedence;
-    Precedence increased_precedence = static_cast<Precedence>(static_cast<int>(precedence + 1));
-
-    return std::make_unique<Binary>(token.lexeme, std::move(left), expression(increased_precedence));
-}
-
 std::unique_ptr<Expression> Parser::variable(const Token token) {
     if (this->peek->type == TokenType::EQUAL) {
         advance();
@@ -130,6 +108,28 @@ std::unique_ptr<Expression> Parser::variable(const Token token) {
     } else {
         return std::make_unique<Variable>(token);
     }
+}
+
+std::unique_ptr<Expression> Parser::binary(const Token token, std::unique_ptr<Expression> left) {
+    Precedence precedence = rule_for(token.type).precedence;
+    Precedence increased_precedence = static_cast<Precedence>(static_cast<int>(precedence + 1));
+
+    return std::make_unique<Binary>(token.lexeme, std::move(left), expression(increased_precedence));
+}
+
+std::unique_ptr<Expression> Parser::unary(const Token token) {
+    return std::make_unique<Unary>(token.lexeme, expression(Precedence::UNARY));
+}
+
+std::unique_ptr<Expression> Parser::grouping(const Token token) {
+    std::unique_ptr<Expression> expr = expression(Precedence::TERM);
+    consume(TokenType::RPAREN, "Expected ')' after grouping expression.");
+
+    return std::make_unique<Grouping>(std::move(expr));
+}
+
+std::unique_ptr<Expression> Parser::number(const Token token) {
+    return std::make_unique<Number>(std::stoi(token.lexeme));
 }
 
 void Parser::advance() {

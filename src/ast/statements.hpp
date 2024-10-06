@@ -26,6 +26,18 @@ private:
     std::vector<std::unique_ptr<Statement>> stmts;
 };
 
+class ExpressionStatement : public Statement {
+public:
+    ExpressionStatement(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
+
+    const Expression *expression() const { return expr.get(); }
+
+    void accept(Visitor &visitor) const override { visitor.visit_expression_statement(*this); }
+
+private:
+    std::unique_ptr<Expression> expr;
+};
+
 class Declaration : public Statement {
 public:
     Declaration(Token token, Type type, std::unique_ptr<Expression> expr)
@@ -34,7 +46,7 @@ public:
     const Token name() const { return token; }
     const Expression *expression() const { return expr.get(); }
 
-    void accept(Visitor &visitor) const override { visitor.visit_declaration(*this); }
+    void accept(Visitor &visitor) const override { visitor.visit_declaration_statement(*this); }
 
 private:
     Token token;
@@ -49,18 +61,6 @@ public:
     const Expression *expression() const { return expr.get(); }
 
     void accept(Visitor &visitor) const override { visitor.visit_print_statement(*this); }
-
-private:
-    std::unique_ptr<Expression> expr;
-};
-
-class ExpressionStatement : public Statement {
-public:
-    ExpressionStatement(std::unique_ptr<Expression> expr) : expr(std::move(expr)) {}
-
-    const Expression *expression() const { return expr.get(); }
-
-    void accept(Visitor &visitor) const override { visitor.visit_expression_statement(*this); }
 
 private:
     std::unique_ptr<Expression> expr;

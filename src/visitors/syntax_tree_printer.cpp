@@ -37,7 +37,7 @@ void SyntaxTreePrinter::visit_program(const Program &node) {
     stack.pop_back();
 };
 
-void SyntaxTreePrinter::visit_declaration(const Declaration &node) {
+void SyntaxTreePrinter::visit_declaration_statement(const Declaration &node) {
     // TODO: add type to string, token to type
     std::string node_id = create_node("Declaration");
 
@@ -48,7 +48,7 @@ void SyntaxTreePrinter::visit_declaration(const Declaration &node) {
     stack.pop_back();
 }
 
-void SyntaxTreePrinter::visit_assignment_statement(const Assignment &node) {
+void SyntaxTreePrinter::visit_assignment_expression(const Assignment &node) {
     std::string node_id = create_node("Assignment");
 
     stack.push_back(node_count - 1);

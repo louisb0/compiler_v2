@@ -13,7 +13,7 @@ void TacGenerator::visit_program(const Program &node) {
     }
 }
 
-void TacGenerator::visit_declaration(const Declaration &node) {
+void TacGenerator::visit_declaration_statement(const Declaration &node) {
     node.expression()->accept(*this);
 
     this->variable_location[node.name().lexeme] = this->instructions.size() - 1;

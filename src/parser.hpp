@@ -49,35 +49,39 @@ private:
     std::unordered_map<TokenType, ParseRule> rules;
 
     void init_rules() {
+        rules.emplace(TokenType::LET, ParseRule());
+        rules.emplace(TokenType::TYPE_I32, ParseRule());
+        rules.emplace(TokenType::IDENTIFIER, ParseRule(&Parser::variable, nullptr, Precedence::NONE));
         rules.emplace(TokenType::NUMBER, ParseRule(&Parser::number, nullptr, Precedence::NONE));
+
         rules.emplace(TokenType::LPAREN, ParseRule(&Parser::grouping, nullptr, Precedence::NONE));
         rules.emplace(TokenType::RPAREN, ParseRule());
+
         rules.emplace(TokenType::COLON, ParseRule());
         rules.emplace(TokenType::SEMICOLON, ParseRule());
         rules.emplace(TokenType::EQUAL, ParseRule());
+
         rules.emplace(TokenType::PLUS, ParseRule(nullptr, &Parser::binary, Precedence::TERM));
         rules.emplace(TokenType::MINUS, ParseRule(&Parser::unary, &Parser::binary, Precedence::TERM));
         rules.emplace(TokenType::STAR, ParseRule(nullptr, &Parser::binary, Precedence::FACTOR));
         rules.emplace(TokenType::SLASH, ParseRule(nullptr, &Parser::binary, Precedence::FACTOR));
+
         rules.emplace(TokenType::PRINT, ParseRule());
-        rules.emplace(TokenType::IDENTIFIER, ParseRule(&Parser::variable, nullptr, Precedence::NONE));
         rules.emplace(TokenType::END_OF_FILE, ParseRule());
     }
 
     std::unique_ptr<Statement> declaration();
+    std::unique_ptr<Declaration> var_declaration();
     std::unique_ptr<Statement> statement();
+    std::unique_ptr<Statement> print();
     std::unique_ptr<ExpressionStatement> expression_statement();
 
-    // where?
-    std::unique_ptr<Declaration> var_declaration();
-
     std::unique_ptr<Expression> expression(const Precedence prec = Precedence::TERM);
-    std::unique_ptr<Expression> number(const Token token);
-    std::unique_ptr<Expression> grouping(const Token token);
+    std::unique_ptr<Expression> variable(const Token token);
     std::unique_ptr<Expression> binary(const Token token, std::unique_ptr<Expression> left);
     std::unique_ptr<Expression> unary(const Token token);
-    std::unique_ptr<Expression> variable(const Token token);
-    std::unique_ptr<Statement> print();
+    std::unique_ptr<Expression> grouping(const Token token);
+    std::unique_ptr<Expression> number(const Token token);
 
     void advance();
     void consume(const TokenType type, const std::string &message);

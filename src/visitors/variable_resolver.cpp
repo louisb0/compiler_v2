@@ -11,7 +11,7 @@ void VariableResolver::visit_program(const Program &node) {
     }
 }
 
-void VariableResolver::visit_declaration(const Declaration &node) {
+void VariableResolver::visit_declaration_statement(const Declaration &node) {
     if (variable_exists(node.name())) {
         throw std::runtime_error("Variable '" + node.name().lexeme + "' was declared more than once.");
     }
@@ -23,7 +23,7 @@ void VariableResolver::visit_declaration(const Declaration &node) {
     stack.pop_back();
 }
 
-void VariableResolver::visit_assignment_statement(const Assignment &node) {
+void VariableResolver::visit_assignment_expression(const Assignment &node) {
     const Node *parent = stack[stack.size() - 1];
     if (dynamic_cast<const ExpressionStatement *>(parent) == nullptr) {
         throw std::runtime_error("Assignment must occur at the top level of the program.");
