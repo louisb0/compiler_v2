@@ -32,11 +32,12 @@ std::string CodeGenerator::generate() {
 
         int result_index = i * 4;
 
+        generated_code += "    /* " + inst.to_string(i) + " */\n";
+
         switch (inst.op) {
         case TacOperation::VALUE:
             // clang-format off
-            generated_code += "    movl $" + std::to_string(inst.operand1) + ", %eax\n"
-                              "    movl %eax, -" + std::to_string(result_index) + "(%ebp)\n\n";
+            generated_code += "    movl $" + std::to_string(inst.operand1) + ", -" + std::to_string(result_index) + "(%ebp)\n\n";
             // clang-format on
             break;
 
