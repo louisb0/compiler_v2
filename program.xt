@@ -1,12 +1,19 @@
-let a: i32 = 5;
-let b: i32 = 1;
-
+let a: i32 = 1;
+let b: i32 = 2;
+let c: i32 = 3;
+{
+    let a: i32 = 4;
+    let b: i32 = 5;
+    {
+        let a: i32 = 6;
+        print(a);
+        print(b);
+        print(c);
+    };
+    print(a);
+    print(b);
+    print(c);
+};
 print(a);
-
-a = a * (b + 1);
-
-print(a);
-
-b = a;
-
 print(b);
+print(c);

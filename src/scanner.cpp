@@ -27,6 +27,10 @@ Token Scanner::read_token() {
         return Token(TokenType::LPAREN, "(", this->line);
     case ')':
         return Token(TokenType::RPAREN, ")", this->line);
+    case '{':
+        return Token(TokenType::LBRACE, "{", this->line);
+    case '}':
+        return Token(TokenType::RBRACE, "}", this->line);
     case ':':
         return Token(TokenType::COLON, ":", this->line);
     case ';':

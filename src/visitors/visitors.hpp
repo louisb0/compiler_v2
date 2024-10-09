@@ -11,16 +11,19 @@
 class TacInstruction;
 
 class Node;
+
 class Program;
-class Declaration;
-class Assignment;
-class Print;
 class ExpressionStatement;
+class Block;
+class Declaration;
+class Print;
+
+class Assignment;
+class Variable;
 class Binary;
 class Unary;
 class Grouping;
 class Number;
-class Variable;
 
 class Visitor {
 public:
@@ -28,6 +31,7 @@ public:
 
     virtual void visit_program(const Program &node) = 0;
     virtual void visit_expression_statement(const ExpressionStatement &node) = 0;
+    virtual void visit_block_statement(const Block &node) = 0;
     virtual void visit_declaration_statement(const Declaration &node) = 0;
     virtual void visit_print_statement(const Print &node) = 0;
 
@@ -47,6 +51,7 @@ public:
 
     void visit_program(const Program &node) override;
     void visit_expression_statement(const ExpressionStatement &node) override;
+    void visit_block_statement(const Block &node) override;
     void visit_declaration_statement(const Declaration &node) override;
     void visit_print_statement(const Print &node) override;
 
@@ -71,6 +76,7 @@ public:
 
     void visit_program(const Program &node) override;
     void visit_expression_statement(const ExpressionStatement &node) override;
+    void visit_block_statement(const Block &node) override;
     void visit_declaration_statement(const Declaration &node) override;
     void visit_print_statement(const Print &node) override;
 
@@ -82,13 +88,32 @@ public:
     void visit_number_expression(const Number &node) override;
 
 private:
-    std::unordered_map<std::string, int> variable_location;
+    std::vector<std::unordered_map<std::string, int>> variable_location_stack;
+};
+
+class VariableResolverEnvironment {
+public:
+    VariableResolverEnvironment(const Node *parent_node) : parent_node(parent_node) {}
+
+    const Node *parent() { return parent_node; }
+    void declare_variable(const Token token) { declared_variables.insert(token.lexeme); }
+    bool variable_exists(const Token token) {
+        return declared_variables.find(token.lexeme) != declared_variables.end();
+    }
+
+private:
+    const Node *parent_node;
+    std::unordered_set<std::string> declared_variables;
 };
 
 class VariableResolver : public Visitor {
 public:
+    VariableResolver() { environments.push_back(new VariableResolverEnvironment(nullptr)); }
+    ~VariableResolver() { delete environments.at(0); }
+
     void visit_program(const Program &node) override;
     void visit_expression_statement(const ExpressionStatement &node) override;
+    void visit_block_statement(const Block &node) override;
     void visit_declaration_statement(const Declaration &node) override;
     void visit_print_statement(const Print &node) override;
 
@@ -100,12 +125,9 @@ public:
     void visit_number_expression(const Number &node) override;
 
 private:
-    std::unordered_set<std::string> declared_variables;
-    std::vector<const Node *> stack;
+    std::vector<VariableResolverEnvironment *> environments;
 
-    void declare_variable(const Token token) { declared_variables.insert(token.lexeme); }
-
-    bool variable_exists(const Token token) {
-        return declared_variables.find(token.lexeme) != declared_variables.end();
-    }
+    void declare_variable(const Token token);
+    bool variable_exists(const Token token);
+    bool can_declare(const Token token);
 };

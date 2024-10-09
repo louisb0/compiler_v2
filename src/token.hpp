@@ -11,6 +11,8 @@ enum TokenType {
 
     LPAREN,
     RPAREN,
+    LBRACE,
+    RBRACE,
 
     COLON,
     SEMICOLON,

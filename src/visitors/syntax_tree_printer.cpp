@@ -72,6 +72,16 @@ void SyntaxTreePrinter::visit_expression_statement(const ExpressionStatement &no
     stack.pop_back();
 }
 
+void SyntaxTreePrinter::visit_block_statement(const Block &node) {
+    std::string node_id = create_node("BlockStatement");
+
+    stack.push_back(node_count - 1);
+    for (auto &stmt : node.statements()) {
+        stmt->accept(*this);
+    }
+    stack.pop_back();
+};
+
 void SyntaxTreePrinter::visit_binary_expression(const Binary &node) {
     std::string node_id = create_node(node.symbol().lexeme);
 

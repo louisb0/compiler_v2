@@ -1,3 +1,6 @@
+#include <string>
+#include <unordered_map>
+
 #include "../ast/expressions.hpp"
 #include "../ast/statements.hpp"
 #include "../tac_instruction.hpp"
@@ -5,6 +8,8 @@
 #include "visitors.hpp"
 
 void TacGenerator::visit_program(const Program &node) {
+    this->variable_location_stack.push_back(std::unordered_map<std::string, int>());
+
     for (auto &stmt : node.statements()) {
         stmt->accept(*this);
     }
@@ -13,11 +18,11 @@ void TacGenerator::visit_program(const Program &node) {
 void TacGenerator::visit_declaration_statement(const Declaration &node) {
     node.expression()->accept(*this);
 
-    this->variable_location[node.name().lexeme] = this->instructions.size() - 1;
+    this->variable_location_stack.back()[node.name().lexeme] = this->instructions.size() - 1;
 }
 
 void TacGenerator::visit_assignment_expression(const Assignment &node) {
-    int declaration = this->variable_location[node.name().lexeme];
+    int declaration = this->variable_location_stack.back()[node.name().lexeme];
     node.expression()->accept(*this);
 
     this->instructions.push_back(TacInstruction(TacOperation::ASSIGN, declaration, this->instructions.size() - 1));
@@ -30,6 +35,14 @@ void TacGenerator::visit_print_statement(const Print &node) {
 };
 
 void TacGenerator::visit_expression_statement(const ExpressionStatement &node) { node.expression()->accept(*this); };
+
+void TacGenerator::visit_block_statement(const Block &node) {
+    this->variable_location_stack.push_back(std::unordered_map<std::string, int>());
+    for (auto &stmt : node.statements()) {
+        stmt->accept(*this);
+    }
+    this->variable_location_stack.pop_back();
+}
 
 void TacGenerator::visit_binary_expression(const Binary &node) {
     node.left()->accept(*this);
@@ -70,7 +83,22 @@ void TacGenerator::visit_number_expression(const Number &node) {
 }
 
 void TacGenerator::visit_variable_expression(const Variable &node) {
-    int declaration = this->variable_location[node.name().lexeme];
+    const std::string &var_name = node.name().lexeme;
+    int declaration = -1;
+
+    for (int i = this->variable_location_stack.size() - 1; i >= 0; --i) {
+        const auto &scope = this->variable_location_stack[i];
+        auto it = scope.find(var_name);
+        if (it != scope.end()) {
+            declaration = it->second;
+            break;
+        }
+    }
+
+    if (declaration == -1) {
+        // unreachable
+        throw std::runtime_error("Variable '" + var_name + "' is not declared in this scope.");
+    }
 
     this->instructions.push_back(TacInstruction(TacOperation::VARIABLE, declaration));
 }

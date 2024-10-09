@@ -49,6 +49,8 @@ std::unique_ptr<Declaration> Parser::var_declaration() {
 std::unique_ptr<Statement> Parser::statement() {
     if (match(TokenType::PRINT)) {
         return print();
+    } else if (match(TokenType::LBRACE)) {
+        return block();
     } else {
         return expression_statement();
     }
@@ -60,6 +62,16 @@ std::unique_ptr<Statement> Parser::print() {
     consume(TokenType::RPAREN, "Expected ')' as part of call to print.");
 
     return std::make_unique<Print>(std::move(expr));
+}
+
+std::unique_ptr<Block> Parser::block() {
+    std::vector<std::unique_ptr<Statement>> stmts;
+    while (!check(TokenType::RBRACE) && !check(TokenType::END_OF_FILE)) {
+        stmts.push_back(std::move(declaration()));
+    }
+
+    consume(TokenType::RBRACE, "Expected closing '}'.");
+    return std::make_unique<Block>(std::move(stmts));
 }
 
 std::unique_ptr<ExpressionStatement> Parser::expression_statement() {
@@ -125,7 +137,7 @@ void Parser::advance() {
 }
 
 void Parser::consume(const TokenType type, const std::string &message) {
-    if (this->peek && this->peek->type == type) {
+    if (check(type)) {
         advance();
     } else {
         throw std::runtime_error(message);
@@ -133,13 +145,15 @@ void Parser::consume(const TokenType type, const std::string &message) {
 }
 
 bool Parser::match(const TokenType type) {
-    if (this->peek && this->peek->type == type) {
+    if (check(type)) {
         advance();
         return true;
     }
 
     return false;
 }
+
+bool Parser::check(const TokenType type) { return this->peek && this->peek->type == type; }
 
 Type Parser::parse_type() {
     if (match(TokenType::TYPE_I32)) {

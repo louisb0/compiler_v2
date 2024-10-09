@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
     out << g->generate();
     out.close();
 
+    delete g;
     delete t;
     delete r;
     delete v;

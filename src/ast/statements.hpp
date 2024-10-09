@@ -38,6 +38,18 @@ private:
     std::unique_ptr<Expression> expr;
 };
 
+class Block : public Statement {
+public:
+    Block(std::vector<std::unique_ptr<Statement>> stmts) : stmts(std::move(stmts)) {}
+
+    const std::vector<std::unique_ptr<Statement>> &statements() const { return stmts; }
+
+    void accept(Visitor &visitor) const override { visitor.visit_block_statement(*this); }
+
+private:
+    std::vector<std::unique_ptr<Statement>> stmts;
+};
+
 class Declaration : public Statement {
 public:
     Declaration(Token token, Type type, std::unique_ptr<Expression> expr)

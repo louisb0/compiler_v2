@@ -58,6 +58,8 @@ private:
 
         rules.emplace(TokenType::LPAREN, ParseRule(&Parser::grouping, nullptr, Precedence::NONE));
         rules.emplace(TokenType::RPAREN, ParseRule());
+        rules.emplace(TokenType::LBRACE, ParseRule());
+        rules.emplace(TokenType::RBRACE, ParseRule());
 
         rules.emplace(TokenType::COLON, ParseRule());
         rules.emplace(TokenType::SEMICOLON, ParseRule());
@@ -76,6 +78,7 @@ private:
     std::unique_ptr<Declaration> var_declaration();
     std::unique_ptr<Statement> statement();
     std::unique_ptr<Statement> print();
+    std::unique_ptr<Block> block();
     std::unique_ptr<ExpressionStatement> expression_statement();
 
     std::unique_ptr<Expression> expression(const Precedence prec = Precedence::TERM);
@@ -85,11 +88,11 @@ private:
     std::unique_ptr<Expression> grouping(const Token token);
     std::unique_ptr<Expression> number(const Token token);
 
-    Type parse_type();
-
     void advance();
     void consume(const TokenType type, const std::string &message);
     bool match(const TokenType type);
+    bool check(const TokenType type);
+    Type parse_type();
 
     const ParseRule &rule_for(TokenType type) const { return rules.at(type); }
 };

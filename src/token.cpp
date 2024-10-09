@@ -5,11 +5,23 @@
 
 namespace TokenUtils {
     const std::unordered_map<TokenType, std::string> token_to_string = {
-        {TokenType::LET, "LET"},       {TokenType::TYPE_I32, "TYPE_I32"},   {TokenType::IDENTIFIER, "IDENTIFIER"},
-        {TokenType::NUMBER, "NUMBER"}, {TokenType::LPAREN, "LPAREN"},       {TokenType::RPAREN, "RPAREN"},
-        {TokenType::COLON, "COLON"},   {TokenType::SEMICOLON, "SEMICOLON"}, {TokenType::EQUAL, "EQUAL"},
-        {TokenType::PLUS, "PLUS"},     {TokenType::MINUS, "MINUS"},         {TokenType::STAR, "STAR"},
-        {TokenType::SLASH, "SLASH"},   {TokenType::PRINT, "PRINT"},         {TokenType::END_OF_FILE, "EOF"},
+        {TokenType::LET, "LET"},
+        {TokenType::TYPE_I32, "TYPE_I32"},
+        {TokenType::IDENTIFIER, "IDENTIFIER"},
+        {TokenType::NUMBER, "NUMBER"},
+        {TokenType::LPAREN, "LPAREN"},
+        {TokenType::RPAREN, "RPAREN"},
+        {TokenType::LBRACE, "LBRACE"},
+        {TokenType::RBRACE, "RBRACE"},
+        {TokenType::COLON, "COLON"},
+        {TokenType::SEMICOLON, "SEMICOLON"},
+        {TokenType::EQUAL, "EQUAL"},
+        {TokenType::PLUS, "PLUS"},
+        {TokenType::MINUS, "MINUS"},
+        {TokenType::STAR, "STAR"},
+        {TokenType::SLASH, "SLASH"},
+        {TokenType::PRINT, "PRINT"},
+        {TokenType::END_OF_FILE, "EOF"},
     };
 
     const std::unordered_map<std::string, TokenType> lexeme_to_token = {
