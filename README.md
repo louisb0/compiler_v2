@@ -41,7 +41,7 @@ Simply print statements with arithmetic. This requires:
 4. TAC -> x86
 
 
-## [ ] v1
+## [X] v1
 
 Then, we'll introduce declarations, types, and assignments.
 
@@ -57,35 +57,8 @@ print(a + 2);
 This will help us get used building out that previous pipeline. We'll also 
 need to add *variable resolution*, to ensure assignment targets are valid.
 
-## [ ] v2
 
-Once the pipeline is all setup, we want to make sure working on it is as easy
-as possible. This means tests and debug information.
-
-Alongside decent test coverage, we should be able to get the following for any
-execution;
-
-1. List of tokens
-2. A dump of the symbol table
-3. `mermaid` graph visualisation of the AST
-4. The x86 with the TAC instructions annotated
-
-
-## [ ] v3
-
-At this stage we have a full pipeline for arithmetic and assignments.
-Then, we'll introduce booleans and boolean related expressions.
-
-```
-let x: bool = true;
-
-print(1 < 2 || x == false && 1 != 3);
-```
-
-This will require a *type checker*, to ensure our both arithmetic and
-assignment are well defined (e.g. false < 5 is not valid).
-
-## [ ] v4
+## [X] v2
 
 We'll need to introduce scope and flesh out scoping rules. This is a
 natural first step towards if statements, loops, and so forth which
@@ -109,22 +82,37 @@ print(a); // 1
 There will be a number of edge cases to iron out.
 
 
-## [ ] v5
+## [ ] v3
+
+At this stage we have a full pipeline for arithmetic and assignments.
+Then, we'll introduce booleans and boolean related expressions.
+
+```
+let x: bool = true;
+
+print(1 < 2 || x == false && 1 != 3);
+```
+
+This will require a *type checker*, to ensure our both arithmetic and
+assignment are well defined (e.g. false < 5 is not valid).
+
+
+## [ ] v4
 
 -- if statements --
 
 
-## [ ] v6
+## [ ] v5
 
 -- basic blocks in the IR --
 
 
-## [ ] v7
+## [ ] v6
 
 -- loops --
 
 
-## [ ] v8
+## [ ] v7
 
 -- functions ?maybe --
 
